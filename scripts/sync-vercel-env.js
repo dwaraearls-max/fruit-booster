@@ -40,6 +40,9 @@ const keys = [
   "PAYMENT_PROVIDER",
   "ADMIN_EMAIL",
   "ADMIN_PASSWORD",
+  "NEXT_PUBLIC_SUPABASE_URL",
+  "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+  "SUPABASE_SERVICE_ROLE_KEY",
 ];
 
 // Prefer production site URL if provided; otherwise leave for manual set after first deploy
@@ -77,6 +80,10 @@ for (const key of keys) {
   const value = parsed[key];
   if (!value) {
     console.warn(`Skipping ${key} (not in .env)`);
+    continue;
+  }
+  if (/\[YOUR-PASSWORD\]|\[REGION\]|REPLACE_WITH/i.test(value)) {
+    console.warn(`Skipping ${key} (placeholder value)`);
     continue;
   }
   for (const env of ["production", "preview"]) {
