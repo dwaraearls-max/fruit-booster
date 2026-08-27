@@ -2,36 +2,61 @@
 
 Freshly blended. Naturally delicious. A Ghana-ready e-commerce site for Fruit Fusion juices.
 
-## Quick start
+## Quick start (local)
+
+1. Create a PostgreSQL database (Docker or [Neon](https://neon.tech)).
+2. Copy env and set `DATABASE_URL`:
 
 ```bash
 npm install
 cp .env.example .env
+# Edit DATABASE_URL to your Postgres connection string
 npx prisma db push
 npm run db:seed
 npm run dev
 ```
 
+Docker (if installed):
+
+```bash
+docker compose up -d
+# then use the DATABASE_URL from .env.example (port 5433)
+```
+
 Open [http://localhost:3000](http://localhost:3000)
+
+## Deploy on Vercel
+
+1. Import the GitHub repo in Vercel.
+2. Add these **Environment Variables** (Production):
+
+| Variable | Notes |
+|---|---|
+| `DATABASE_URL` | **Required.** Postgres URL (Neon or Vercel Postgres). Must be reachable at build time. |
+| `AUTH_SECRET` | Long random string |
+| `NEXT_PUBLIC_SITE_URL` | Your Vercel URL, e.g. `https://fruit-fusion.vercel.app` |
+| `NEXT_PUBLIC_WHATSAPP` | `233246572540` |
+| `PAYMENT_PROVIDER` | `moolre` (optional until keys are set) |
+| `MOOLRE_*` | Optional — demo checkout works without keys |
+
+3. Redeploy. The build runs `prisma db push`, seeds catalogue/admin, then `next build`.
+
+**SQLite will not work on Vercel.** Use Postgres only.
+
+### Free Postgres (Neon)
+
+1. Create a project at [neon.tech](https://neon.tech)
+2. Copy the connection string into Vercel `DATABASE_URL`
+3. Prefer the pooled URL for serverless (often includes `?sslmode=require`)
 
 ## Admin
 
 - URL: `/admin/login`
 - Default: `admin@fruitfusion.gh` / `FruitFusion2026!`
 
-## Database
+## Payments
 
-Local dev uses **SQLite** (`file:./dev.db`) when Docker is unavailable.
-
-For production, set `DATABASE_URL` to PostgreSQL and change `provider` in `prisma/schema.prisma` to `postgresql`. Use `docker compose up -d` when Docker is installed.
-
-## Paystack
-
-Add `PAYSTACK_SECRET_KEY` and `PAYSTACK_PUBLIC_KEY` to `.env` for live payments. Set `PAYMENT_PROVIDER=paystack`.
-
-## Moolre (recommended for Ghana)
-
-Add your Moolre credentials to `.env`:
+### Moolre (recommended for Ghana)
 
 ```
 PAYMENT_PROVIDER=moolre
@@ -41,16 +66,16 @@ MOOLRE_ACCOUNT_NUMBER=your_account_number
 MOOLRE_SANDBOX=true
 ```
 
-- **MoMo**: sends a USSD prompt to the customer's phone (MTN / Telecel / AirtelTigo)
-- **Card**: uses Moolre hosted payment page
+- **MoMo**: USSD prompt to the customer's phone (MTN / Telecel / AirtelTigo)
+- **Card**: Moolre hosted payment page
 - Webhook: `{SITE_URL}/api/payments/moolre/webhook`
 
 Without keys, orders use demo mode and admin can confirm MoMo manually.
 
-## Flavours
+### Paystack (alternative)
 
-Edit names/prices in admin or update `prisma/seed.ts` and re-seed.
+Set `PAYMENT_PROVIDER=paystack` plus `PAYSTACK_SECRET_KEY` and `PAYSTACK_PUBLIC_KEY`.
 
 ## Stack
 
-Next.js 15 · React 19 · Tailwind CSS 4 · Prisma · Paystack-ready · WhatsApp ordering
+Next.js 15 · React 19 · Tailwind CSS 4 · Prisma · PostgreSQL · Moolre / Paystack · WhatsApp ordering

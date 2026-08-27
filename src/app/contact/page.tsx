@@ -2,10 +2,17 @@ import { prisma } from "@/lib/db";
 import { waLink } from "@/lib/ghana";
 import { BRAND } from "@/lib/site-content";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = { title: "Contact" };
 
 export default async function ContactPage() {
-  const settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
+  let settings: Awaited<ReturnType<typeof prisma.siteSettings.findUnique>> = null;
+  try {
+    settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
+  } catch (error) {
+    console.error("Contact page data load failed:", error);
+  }
   const email = settings?.email || BRAND.email;
   const instagram = settings?.instagram || BRAND.instagram;
   const tiktok = settings?.tiktok || BRAND.tiktok;

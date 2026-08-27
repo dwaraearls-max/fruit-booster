@@ -5,7 +5,12 @@ import { waLink } from "@/lib/ghana";
 import { BRAND } from "@/lib/site-content";
 
 export async function Footer() {
-  const settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
+  let settings: Awaited<ReturnType<typeof prisma.siteSettings.findUnique>> = null;
+  try {
+    settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
+  } catch {
+    /* use brand fallbacks */
+  }
   const tagline = settings?.tagline || BRAND.tagline;
   const email = settings?.email || BRAND.email;
   const instagram = settings?.instagram || BRAND.instagram;

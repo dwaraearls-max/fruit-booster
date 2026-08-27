@@ -5,11 +5,20 @@ import { getProducts, serializeProduct } from "@/services/products";
 import { prisma } from "@/lib/db";
 import { BRAND } from "@/lib/site-content";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
-  const [products, settings] = await Promise.all([
-    getProducts(),
-    prisma.siteSettings.findUnique({ where: { id: "default" } }),
-  ]);
+  let products: Awaited<ReturnType<typeof getProducts>> = [];
+  let settings: Awaited<ReturnType<typeof prisma.siteSettings.findUnique>> = null;
+
+  try {
+    [products, settings] = await Promise.all([
+      getProducts(),
+      prisma.siteSettings.findUnique({ where: { id: "default" } }),
+    ]);
+  } catch (error) {
+    console.error("Home page data load failed:", error);
+  }
 
   const serialized = products.map(serializeProduct);
 

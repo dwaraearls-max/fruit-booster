@@ -1,13 +1,20 @@
 import { prisma } from "@/lib/db";
 import { formatGhs } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = { title: "Delivery Information" };
 
 export default async function DeliveryPage() {
-  const zones = await prisma.deliveryZone.findMany({
-    where: { active: true },
-    orderBy: { sortOrder: "asc" },
-  });
+  let zones: Awaited<ReturnType<typeof prisma.deliveryZone.findMany>> = [];
+  try {
+    zones = await prisma.deliveryZone.findMany({
+      where: { active: true },
+      orderBy: { sortOrder: "asc" },
+    });
+  } catch (error) {
+    console.error("Delivery page data load failed:", error);
+  }
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 md:px-6">

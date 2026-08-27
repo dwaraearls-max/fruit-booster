@@ -8,6 +8,8 @@ import { waLink } from "@/lib/ghana";
 import { buildWhatsAppOrderMessage } from "@/services/orders";
 import { OrderVerifyClient } from "@/components/OrderVerifyClient";
 
+export const dynamic = "force-dynamic";
+
 export default async function OrderPage({
   params,
   searchParams,

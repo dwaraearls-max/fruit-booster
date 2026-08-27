@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { getAdminSession } from "@/services/auth";
 import { AdminLogoutButton } from "@/components/admin/AdminLogoutButton";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardLayout({
   children,
 }: {

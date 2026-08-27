@@ -9,7 +9,7 @@ const FLAVOURS = [
     name: "Strawberry Fusion",
     slug: "strawberry-fusion",
     flavour: "strawberry",
-    description: "Freshly blended strawberry juice with a naturally fruity taste.",
+    description: "Freshly blended strawberry smoothie with a naturally fruity taste.",
     imageUrl: "/products/strawberry-fusion.jpg",
     bestSeller: true,
     featured: true,
@@ -79,65 +79,61 @@ const FLAVOURS = [
   },
 ];
 
-const SIZE_PRICES = [
-  { name: "regular", label: "Regular", priceGhs: 100, sortOrder: 1 },
-];
-
-const ZONES = [
-  { name: "Accra Central", deliveryFeeGhs: 15, estimatedMins: 35, sortOrder: 1 },
-  { name: "East Legon", deliveryFeeGhs: 20, estimatedMins: 40, sortOrder: 2 },
-  { name: "Osu", deliveryFeeGhs: 18, estimatedMins: 35, sortOrder: 3 },
-  { name: "Madina", deliveryFeeGhs: 22, estimatedMins: 45, sortOrder: 4 },
-  { name: "Tema", deliveryFeeGhs: 30, estimatedMins: 55, sortOrder: 5 },
-  { name: "Other Accra", deliveryFeeGhs: 25, estimatedMins: 50, sortOrder: 6 },
-];
-
 async function main() {
-  await prisma.orderItem.deleteMany();
-  await prisma.orderStatusHistory.deleteMany();
-  await prisma.payment.deleteMany();
-  await prisma.order.deleteMany();
-  await prisma.cartItem.deleteMany();
-  await prisma.cart.deleteMany();
-  await prisma.productSize.deleteMany();
-  await prisma.product.deleteMany();
-  await prisma.deliveryZone.deleteMany();
-  await prisma.pickupLocation.deleteMany();
-  await prisma.promoCode.deleteMany();
-  await prisma.auditLog.deleteMany();
-  await prisma.user.deleteMany();
-  await prisma.customer.deleteMany();
-
-  for (const flavour of FLAVOURS) {
-    const { isNew, bestSeller, featured, ...data } = flavour;
-    await prisma.product.create({
-      data: {
-        ...data,
-        bestSeller: bestSeller ?? false,
-        featured: featured ?? false,
-        isNew: isNew ?? false,
-        sizes: {
-          create: SIZE_PRICES,
+  const existing = await prisma.product.count();
+  if (existing === 0) {
+    for (const flavour of FLAVOURS) {
+      const { isNew, bestSeller, featured, ...data } = flavour;
+      await prisma.product.create({
+        data: {
+          ...data,
+          bestSeller: bestSeller ?? false,
+          featured: featured ?? false,
+          isNew: isNew ?? false,
+          sizes: {
+            create: [{ name: "regular", label: "Regular", priceGhs: 100, sortOrder: 1 }],
+          },
         },
+      });
+    }
+    console.log("Seeded 8 products.");
+  } else {
+    console.log(`Products already present (${existing}). Skipping product seed.`);
+  }
+
+  const zones = [
+    { name: "Accra Central", deliveryFeeGhs: 15, estimatedMins: 35, sortOrder: 1 },
+    { name: "East Legon", deliveryFeeGhs: 20, estimatedMins: 40, sortOrder: 2 },
+    { name: "Osu", deliveryFeeGhs: 18, estimatedMins: 35, sortOrder: 3 },
+    { name: "Madina", deliveryFeeGhs: 22, estimatedMins: 45, sortOrder: 4 },
+    { name: "Tema", deliveryFeeGhs: 30, estimatedMins: 55, sortOrder: 5 },
+    { name: "Other Accra", deliveryFeeGhs: 25, estimatedMins: 50, sortOrder: 6 },
+  ];
+
+  for (const zone of zones) {
+    await prisma.deliveryZone.upsert({
+      where: { name: zone.name },
+      update: zone,
+      create: zone,
+    });
+  }
+
+  const pickupCount = await prisma.pickupLocation.count();
+  if (pickupCount === 0) {
+    await prisma.pickupLocation.create({
+      data: {
+        name: "Fruit Fusion Store",
+        address: "Accra, Ghana",
+        instructions: "Collect your smoothie at the counter. Please bring your order number.",
+        sortOrder: 1,
       },
     });
   }
 
-  for (const zone of ZONES) {
-    await prisma.deliveryZone.create({ data: zone });
-  }
-
-  await prisma.pickupLocation.create({
-    data: {
-      name: "Fruit Fusion Store",
-      address: "East Legon, Accra, Ghana",
-      instructions: "Collect your juice at the counter. Please bring your order number.",
-      sortOrder: 1,
-    },
-  });
-
-  await prisma.promoCode.create({
-    data: {
+  await prisma.promoCode.upsert({
+    where: { code: "FUSION10" },
+    update: {},
+    create: {
       code: "FUSION10",
       type: "PERCENT",
       value: 10,
@@ -146,36 +142,44 @@ async function main() {
     },
   });
 
-  const siteSettings = {
-    businessName: BRAND.name,
-    tagline: BRAND.tagline,
-    email: BRAND.email,
-    phone: BRAND.phone,
-    whatsapp: BRAND.whatsapp,
-    instagram: BRAND.instagram,
-    tiktok: BRAND.tiktok,
-  };
-
   await prisma.siteSettings.upsert({
     where: { id: "default" },
-    update: siteSettings,
-    create: siteSettings,
+    update: {
+      businessName: BRAND.name,
+      tagline: BRAND.tagline,
+      email: BRAND.email,
+      phone: BRAND.phone,
+      whatsapp: BRAND.whatsapp,
+      instagram: BRAND.instagram,
+      tiktok: BRAND.tiktok,
+    },
+    create: {
+      businessName: BRAND.name,
+      tagline: BRAND.tagline,
+      email: BRAND.email,
+      phone: BRAND.phone,
+      whatsapp: BRAND.whatsapp,
+      instagram: BRAND.instagram,
+      tiktok: BRAND.tiktok,
+    },
   });
 
   const adminEmail = process.env.ADMIN_EMAIL || "admin@fruitfusion.gh";
   const adminPassword = process.env.ADMIN_PASSWORD || "FruitFusion2026!";
-  const passwordHash = await bcrypt.hash(adminPassword, 12);
+  const existingAdmin = await prisma.user.findUnique({ where: { email: adminEmail } });
+  if (!existingAdmin) {
+    await prisma.user.create({
+      data: {
+        fullName: "Fruit Fusion Admin",
+        email: adminEmail,
+        passwordHash: await bcrypt.hash(adminPassword, 12),
+        role: UserRole.SUPER_ADMIN,
+      },
+    });
+    console.log(`Created admin ${adminEmail}`);
+  }
 
-  await prisma.user.create({
-    data: {
-      fullName: "Fruit Fusion Admin",
-      email: adminEmail,
-      passwordHash,
-      role: UserRole.SUPER_ADMIN,
-    },
-  });
-
-  console.log("Seeded 8 flavours, delivery zones, admin user, and site settings.");
+  console.log("Seed complete.");
 }
 
 main()
