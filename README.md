@@ -1,59 +1,43 @@
-# Fruit Fusion — Premium Juice Store
+# FruitFusionX — Premium Juice Store
 
-Freshly blended. Naturally delicious. A Ghana-ready e-commerce site for Fruit Fusion juices.
+Freshly blended. Naturally delicious. A Ghana-ready e-commerce site for FruitFusionX juices.
 
 ## Quick start (local)
 
-1. Create a PostgreSQL database (Docker or [Neon](https://neon.tech)).
-2. Copy env and set `DATABASE_URL`:
+1. Copy env and paste your Supabase Postgres URIs (see Database section).
+2. Install and run:
 
 ```bash
 npm install
 cp .env.example .env
-# Edit DATABASE_URL to your Postgres connection string
-npx prisma db push
-npm run db:seed
+# set DATABASE_URL + DATABASE_URL_DIRECT from Supabase
 npm run dev
 ```
 
-Docker (if installed):
+Open [http://localhost:3005](http://localhost:3005) (or the port you choose).
+
+Schema + seed are already applied on the linked Supabase project.
+
+## Database (Supabase)
+
+This app uses **Prisma + Supabase Postgres**.
+
+1. Open [Database settings](https://supabase.com/dashboard/project/akcyzqarqocxbxuprmlh/settings/database)
+2. Copy the **URI** connection strings into `.env`:
+   - `DATABASE_URL` — Transaction pooler (port **6543**, add `?pgbouncer=true`)
+   - `DATABASE_URL_DIRECT` — Session mode / direct (port **5432**)
+3. Seed:
 
 ```bash
-docker compose up -d
-# then use the DATABASE_URL from .env.example (port 5433)
+npx prisma db push
+npm run db:seed
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Project URL: `https://akcyzqarqocxbxuprmlh.supabase.co`
 
 ## Deploy on Vercel
 
-1. Import the GitHub repo in Vercel.
-2. Add these **Environment Variables** (Production):
-
-| Variable | Notes |
-|---|---|
-| `DATABASE_URL` | **Required.** Postgres URL (Neon or Vercel Postgres). Must be reachable at build time. |
-| `AUTH_SECRET` | Long random string |
-| `NEXT_PUBLIC_SITE_URL` | Your Vercel URL, e.g. `https://fruit-fusion.vercel.app` |
-| `NEXT_PUBLIC_WHATSAPP` | `233246572540` |
-| `PAYMENT_PROVIDER` | `moolre` (optional until keys are set) |
-| `MOOLRE_*` | Optional — demo checkout works without keys |
-
-3. Redeploy. The build runs `prisma db push`, seeds catalogue/admin, then `next build`.
-
-**SQLite will not work on Vercel.** Use Postgres only.
-
-### Free Postgres (Neon — recommended)
-
-Fastest setup from your machine:
-
-```bash
-npx neon-new@latest --yes
-```
-
-That writes `DATABASE_URL` and `DATABASE_URL_DIRECT` into `.env`. Copy both into Vercel env vars.
-
-**Important:** claim the database within 72 hours via the `PUBLIC_POSTGRES_CLAIM_URL` printed in `.env` (or run `npx neon-new claim`), otherwise it expires.
+Set the same Supabase `DATABASE_URL` / `DATABASE_URL_DIRECT` in Vercel env (Production + Preview), plus `AUTH_SECRET`, `NEXT_PUBLIC_SITE_URL`, and `NEXT_PUBLIC_WHATSAPP`. Redeploy after updating.
 
 ## Admin
 

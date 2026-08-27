@@ -11,19 +11,16 @@ const url = process.env.DATABASE_URL || "";
 if (!url) {
   console.error(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  Fruit Fusion deploy blocked: DATABASE_URL is not set.
+  FruitFusionX deploy blocked: DATABASE_URL is not set.
 
-  Quick fix (free Neon Postgres):
-    1. Locally run:  npx neon-new@latest --yes
-    2. Copy DATABASE_URL + DATABASE_URL_DIRECT into Vercel
-       → Project → Settings → Environment Variables
-    3. Also set:
-       AUTH_SECRET = <long random string>
-       NEXT_PUBLIC_SITE_URL = https://<your-app>.vercel.app
-       NEXT_PUBLIC_WHATSAPP = 233246572540
-    4. Redeploy
+  Quick fix (Supabase Postgres):
+    1. Open https://supabase.com/dashboard/project/akcyzqarqocxbxuprmlh/settings/database
+    2. Copy Transaction pooler URI → DATABASE_URL (add ?pgbouncer=true)
+    3. Copy Session/Direct URI → DATABASE_URL_DIRECT
+    4. Also set AUTH_SECRET, NEXT_PUBLIC_SITE_URL, NEXT_PUBLIC_WHATSAPP
+    5. Redeploy
 
-  Or create a DB at https://neon.tech and paste the URLs.
+  Project: https://akcyzqarqocxbxuprmlh.supabase.co
   SQLite (file:./dev.db) will NOT work on Vercel.
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 `);
@@ -33,7 +30,7 @@ if (!url) {
 if (url.startsWith("file:")) {
   console.error(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  Fruit Fusion deploy blocked: DATABASE_URL is SQLite.
+  FruitFusionX deploy blocked: DATABASE_URL is SQLite.
   Use a PostgreSQL URL from Neon (npx neon-new@latest --yes).
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 `);

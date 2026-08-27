@@ -20,7 +20,7 @@ export async function Footer() {
     <footer className="bg-plum-dark text-white">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-4 md:px-6">
         <div className="md:col-span-2">
-          <Image src="/brand/logo.png" alt="Fruit Fusion" width={220} height={44} className="mb-4 h-12 w-auto" />
+          <Image src="/brand/logo.png" alt="FruitFusionX" width={220} height={44} className="mb-4 h-12 w-auto" />
           <p className="text-lg font-medium text-gold">{tagline}</p>
           <p className="mt-3 max-w-sm text-sm text-white/70">{BRAND.shortDescription}</p>
           <p className="mt-2 text-sm text-white/60">
@@ -78,7 +78,7 @@ export async function Footer() {
           Est. 2026 · Accra, Ghana
         </p>
         <p className="mt-2 text-sm text-white/70">
-          © 2026 <span className="font-bold text-white">Fruit Fusion</span>. Powered by{" "}
+          © 2026 <span className="font-bold text-white">FruitFusionX</span>. Powered by{" "}
           <span className="font-bold text-gold">EarlsdwaraDigital</span>.
         </p>
       </div>

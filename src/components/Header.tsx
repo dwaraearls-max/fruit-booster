@@ -28,7 +28,7 @@ export function Header() {
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/brand/logo.png"
-            alt="Fruit Fusion"
+            alt="FruitFusionX"
             width={200}
             height={40}
             className="h-10 w-auto md:h-12"

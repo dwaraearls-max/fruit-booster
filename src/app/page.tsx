@@ -71,7 +71,7 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-16 md:px-6">
-        <h2 className="text-center text-3xl font-black text-plum">WHY FRUIT FUSION?</h2>
+        <h2 className="text-center text-3xl font-black text-plum">WHY FRUITFUSIONX?</h2>
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
             ["🫐", "100% NATURAL", "Blueberries, raspberries, blackberries, strawberries & tropical fruits — no added sugar."],
@@ -91,13 +91,13 @@ export default async function HomePage() {
       <section className="bg-plum text-white">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
           <div className="relative aspect-square overflow-hidden rounded-3xl">
-            <Image src="/products/strawberry-fusion.jpg" alt="Fresh strawberry Fruit Fusion smoothie" fill className="object-cover" />
+            <Image src="/products/strawberry-fusion.jpg" alt="Fresh strawberry FruitFusionX smoothie" fill className="object-cover" />
           </div>
           <div>
             <h2 className="text-4xl font-black text-gold">YOU CAN TASTE THE FRESHNESS.</h2>
             <p className="mt-4 text-xl font-semibold">Tropical fruits meet exotic.</p>
             <p className="mt-4 text-white/80">
-              FruitFusion specializes in fresh, creamy blends — smoothies and parfaits served daily for walk-in customers and fast delivery across Ghana.
+              FruitFusionX specializes in fresh, creamy blends — smoothies and parfaits served daily for walk-in customers and fast delivery across Ghana.
             </p>
           </div>
         </div>

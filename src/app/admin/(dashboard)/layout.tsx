@@ -18,7 +18,7 @@ export default async function AdminDashboardLayout({
       <header className="border-b bg-white px-6 py-4">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <Link href="/admin" className="text-xl font-black text-plum">
-            Fruit Fusion Admin
+            FruitFusionX Admin
           </Link>
           <nav className="flex flex-wrap items-center gap-4 text-sm font-semibold text-plum">
             <Link href="/admin">Dashboard</Link>

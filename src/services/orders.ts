@@ -297,7 +297,7 @@ export function buildWhatsAppOrderMessage(order: {
     (i) => `🍹 ${i.productNameSnapshot} × ${i.quantity}`,
   );
   return [
-    "Hello Fruit Fusion 👋",
+    "Hello FruitFusionX 👋",
     "",
     "I'd like to order:",
     "",

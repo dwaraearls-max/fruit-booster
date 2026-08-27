@@ -122,11 +122,16 @@ async function main() {
   if (pickupCount === 0) {
     await prisma.pickupLocation.create({
       data: {
-        name: "Fruit Fusion Store",
+        name: "FruitFusionX Store",
         address: "Accra, Ghana",
         instructions: "Collect your smoothie at the counter. Please bring your order number.",
         sortOrder: 1,
       },
+    });
+  } else {
+    await prisma.pickupLocation.updateMany({
+      where: { name: "Fruit Fusion Store" },
+      data: { name: "FruitFusionX Store" },
     });
   }
 
@@ -170,7 +175,7 @@ async function main() {
   if (!existingAdmin) {
     await prisma.user.create({
       data: {
-        fullName: "Fruit Fusion Admin",
+        fullName: "FruitFusionX Admin",
         email: adminEmail,
         passwordHash: await bcrypt.hash(adminPassword, 12),
         role: UserRole.SUPER_ADMIN,

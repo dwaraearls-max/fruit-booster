@@ -24,7 +24,7 @@ export default function AdminLoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-plum px-4">
       <form onSubmit={handleSubmit} className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
-        <h1 className="text-2xl font-black text-plum">Fruit Fusion Admin</h1>
+        <h1 className="text-2xl font-black text-plum">FruitFusionX Admin</h1>
         <div className="mt-6 space-y-4">
           <input
             type="email"

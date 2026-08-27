@@ -16,25 +16,32 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
   title: {
-    default: "Fruit Fusion | Premium Smoothies & Fresh Blends Ghana",
-    template: "%s | Fruit Fusion",
+    default: "FruitFusionX | Premium Smoothies & Fresh Blends Ghana",
+    template: "%s | FruitFusionX",
   },
   description:
-    "FruitFusion — premium healthy smoothies and parfaits in Ghana. 100% natural fruit, no added sugar. Walk-in or fast delivery.",
+    "FruitFusionX — premium healthy smoothies and parfaits in Ghana. 100% natural fruit, no added sugar. Walk-in or fast delivery.",
   keywords: [
     "smoothies Ghana",
-    "fruit fusion Ghana",
+    "FruitFusionX Ghana",
     "healthy smoothies Accra",
     "smoothie delivery Ghana",
     "fresh fruit parfait Ghana",
     "natural smoothies Ghana",
   ],
   openGraph: {
-    title: `Fruit Fusion — ${BRAND.tagline}`,
+    title: `FruitFusionX — ${BRAND.tagline}`,
     description: BRAND.shortDescription,
     images: ["/brand/logo.png"],
     locale: "en_GH",
     type: "website",
+  },
+  icons: {
+    icon: [
+      { url: "/brand/favicon.png", type: "image/png", sizes: "512x512" },
+      { url: "/icon.png", type: "image/png", sizes: "32x32" },
+    ],
+    apple: [{ url: "/apple-icon.png", type: "image/png", sizes: "180x180" }],
   },
 };
 

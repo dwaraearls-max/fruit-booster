@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Shop All Smoothies",
-  description: "Order FruitFusion signature smoothie blends. 100% natural fruit, fast delivery in Ghana.",
+  description: "Order FruitFusionX signature smoothie blends. 100% natural fruit, fast delivery in Ghana.",
 };
 
 export default async function ShopPage() {

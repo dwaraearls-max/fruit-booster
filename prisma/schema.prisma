@@ -241,7 +241,7 @@ model PromoCode {
 
 model SiteSettings {
   id                String   @id @default("default")
-  businessName      String   @default("Fruit Fusion")
+  businessName      String   @default("FruitFusionX")
   tagline           String   @default("Where Tropical Fruits Meet Exotic.")
   phone             String   @default("0246572540")
   whatsapp          String   @default("233246572540")

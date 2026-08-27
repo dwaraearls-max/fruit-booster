@@ -51,7 +51,7 @@ export default async function OrderPage({
         {paid ? (
           <>
             <h1 className="text-4xl font-black text-plum">ORDER CONFIRMED! 🎉</h1>
-            <p className="mt-2 text-plum/70">Thank you for choosing Fruit Fusion.</p>
+            <p className="mt-2 text-plum/70">Thank you for choosing FruitFusionX.</p>
           </>
         ) : (
           <>

@@ -10,7 +10,7 @@ export function WhatsAppButton() {
   async function handleClick() {
     const res = await fetch("/api/whatsapp");
     const json = await res.json();
-    const message = json.success ? json.data.message : "Hello Fruit Fusion, I'd like to order juice!";
+    const message = json.success ? json.data.message : "Hello FruitFusionX, I'd like to order juice!";
     window.open(waLink(message), "_blank", "noopener,noreferrer");
   }
 
