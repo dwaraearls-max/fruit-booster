@@ -43,11 +43,17 @@ Open [http://localhost:3000](http://localhost:3000)
 
 **SQLite will not work on Vercel.** Use Postgres only.
 
-### Free Postgres (Neon)
+### Free Postgres (Neon — recommended)
 
-1. Create a project at [neon.tech](https://neon.tech)
-2. Copy the connection string into Vercel `DATABASE_URL`
-3. Prefer the pooled URL for serverless (often includes `?sslmode=require`)
+Fastest setup from your machine:
+
+```bash
+npx neon-new@latest --yes
+```
+
+That writes `DATABASE_URL` and `DATABASE_URL_DIRECT` into `.env`. Copy both into Vercel env vars.
+
+**Important:** claim the database within 72 hours via the `PUBLIC_POSTGRES_CLAIM_URL` printed in `.env` (or run `npx neon-new claim`), otherwise it expires.
 
 ## Admin
 

@@ -2,7 +2,21 @@ import { getDashboardStats } from "@/services/admin";
 import { formatGhs } from "@/lib/utils";
 
 export default async function AdminDashboardPage() {
-  const stats = await getDashboardStats();
+  let stats = {
+    todayOrders: 0,
+    todaySales: 0,
+    pendingOrders: 0,
+    completedOrders: 0,
+    totalCustomers: 0,
+    bestSellingFlavour: "—",
+    weeklyRevenue: 0,
+  };
+
+  try {
+    stats = await getDashboardStats();
+  } catch (error) {
+    console.error("Admin dashboard stats failed:", error);
+  }
 
   const cards = [
     ["Today's Orders", stats.todayOrders],

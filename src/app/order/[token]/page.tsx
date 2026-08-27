@@ -19,7 +19,14 @@ export default async function OrderPage({
 }) {
   const { token } = await params;
   const sp = await searchParams;
-  const order = await getOrderByToken(token);
+
+  let order: Awaited<ReturnType<typeof getOrderByToken>> = null;
+  try {
+    order = await getOrderByToken(token);
+  } catch (error) {
+    console.error("Order page data load failed:", error);
+    notFound();
+  }
 
   if (!order) notFound();
 
