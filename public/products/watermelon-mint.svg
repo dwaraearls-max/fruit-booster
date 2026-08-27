@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="watermelon-mint">
+  <defs>
+    <linearGradient id="bg-watermelon-mint" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF4757"/>
+      <stop offset="100%" stop-color="#2ECC71"/>
+    </linearGradient>
+    <radialGradient id="cup-watermelon-mint" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.2"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg-watermelon-mint)"/>
+  <ellipse cx="200" cy="340" rx="90" ry="18" fill="#000" opacity="0.15"/>
+  <path d="M130 120 Q200 80 270 120 L250 300 Q200 330 150 300 Z" fill="#fff" opacity="0.95"/>
+  <path d="M130 120 Q200 80 270 120 L250 300 Q200 330 150 300 Z" fill="url(#cup-watermelon-mint)"/>
+  <rect x="155" y="95" width="90" height="30" rx="8" fill="#4B1B5C"/>
+  <text x="200" y="280" text-anchor="middle" font-size="72">🍉</text>
+  <circle cx="160" cy="180" r="4" fill="#fff" opacity="0.6"/>
+  <circle cx="240" cy="200" r="3" fill="#fff" opacity="0.5"/>
+  <circle cx="220" cy="160" r="5" fill="#fff" opacity="0.4"/>
+</svg>

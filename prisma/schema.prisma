@@ -1,0 +1,267 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  STAFF
+}
+
+enum OrderStatus {
+  NEW
+  PAYMENT_CONFIRMED
+  PREPARING
+  READY
+  OUT_FOR_DELIVERY
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  AWAITING_PAYMENT
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum DeliveryType {
+  DELIVERY
+  PICKUP
+}
+
+enum PromoType {
+  PERCENT
+  FIXED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  fullName     String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(ADMIN)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  statusLogs   OrderStatusHistory[]
+  auditLogs    AuditLog[]
+}
+
+model Customer {
+  id             String   @id @default(cuid())
+  fullName       String?
+  email          String?
+  phone          String   @unique
+  whatsappNumber String?
+  totalSpentGhs  Float    @default(0)
+  orderCount     Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  orders         Order[]
+}
+
+model Product {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  description String
+  flavour     String
+  category    String        @default("juice")
+  imageUrl    String
+  active      Boolean       @default(true)
+  available   Boolean       @default(true)
+  featured    Boolean       @default(false)
+  bestSeller  Boolean       @default(false)
+  isNew       Boolean       @default(false)
+  sortOrder   Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  sizes       ProductSize[]
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+}
+
+model ProductSize {
+  id        String     @id @default(cuid())
+  productId String
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String
+  label     String
+  priceGhs  Float
+  sku       String?
+  available Boolean    @default(true)
+  sortOrder Int        @default(0)
+  cartItems CartItem[]
+  orderItems OrderItem[]
+
+  @@unique([productId, name])
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  items     CartItem[]
+}
+
+model CartItem {
+  id        String      @id @default(cuid())
+  cartId    String
+  cart      Cart        @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product     @relation(fields: [productId], references: [id])
+  sizeId    String
+  size      ProductSize @relation(fields: [sizeId], references: [id])
+  quantity  Int         @default(1)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([cartId, productId, sizeId])
+}
+
+model Order {
+  id                  String               @id @default(cuid())
+  orderNumber         String               @unique
+  publicToken         String               @unique
+  customerId          String?
+  customer            Customer?            @relation(fields: [customerId], references: [id])
+  customerName        String
+  phone               String
+  whatsappNumber      String?
+  email               String?
+  deliveryType        DeliveryType
+  deliveryAddress     String?
+  area                String?
+  landmark            String?
+  deliveryInstructions String?
+  pickupLocationId    String?
+  pickupLocation      PickupLocation?      @relation(fields: [pickupLocationId], references: [id])
+  subtotalGhs         Float
+  deliveryFeeGhs      Float                @default(0)
+  discountGhs         Float                @default(0)
+  totalGhs            Float
+  paymentStatus       PaymentStatus        @default(AWAITING_PAYMENT)
+  orderStatus         OrderStatus          @default(NEW)
+  promoCode           String?
+  paystackRef         String?
+  paymentProvider     String?
+  momoNetwork         String?
+  paymentMethod       String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  items               OrderItem[]
+  payments            Payment[]
+  statusHistory       OrderStatusHistory[]
+}
+
+model OrderItem {
+  id                 String      @id @default(cuid())
+  orderId            String
+  order              Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId          String?
+  product            Product?    @relation(fields: [productId], references: [id])
+  sizeId             String?
+  size               ProductSize? @relation(fields: [sizeId], references: [id])
+  productNameSnapshot String
+  sizeLabelSnapshot  String
+  quantity           Int
+  unitPriceSnapshot  Float
+  subtotalGhs        Float
+}
+
+model OrderStatusHistory {
+  id         String      @id @default(cuid())
+  orderId    String
+  order      Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  fromStatus OrderStatus?
+  toStatus   OrderStatus
+  note       String?
+  changedById String?
+  changedBy  User?       @relation(fields: [changedById], references: [id])
+  createdAt  DateTime    @default(now())
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  orderId     String
+  order       Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  reference   String        @unique
+  amountGhs   Float
+  provider    String        @default("paystack")
+  status      PaymentStatus @default(PENDING)
+  rawPayload  String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model DeliveryZone {
+  id              String   @id @default(cuid())
+  name            String   @unique
+  deliveryFeeGhs  Float
+  estimatedMins   Int      @default(45)
+  active          Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model PickupLocation {
+  id           String   @id @default(cuid())
+  name         String
+  address      String
+  instructions String?
+  active       Boolean  @default(true)
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  orders       Order[]
+}
+
+model PromoCode {
+  id            String    @id @default(cuid())
+  code          String    @unique
+  type          PromoType
+  value         Float
+  minOrderGhs   Float     @default(0)
+  usageLimit    Int?
+  usedCount     Int       @default(0)
+  active        Boolean   @default(true)
+  expiresAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model SiteSettings {
+  id                String   @id @default("default")
+  businessName      String   @default("Fruit Fusion")
+  tagline           String   @default("Where Tropical Fruits Meet Exotic.")
+  phone             String   @default("0246572540")
+  whatsapp          String   @default("233246572540")
+  email             String   @default("fruitfusion45@gmail.com")
+  address           String   @default("Accra, Ghana")
+  pickupInstructions String  @default("Collect your order at our store. Please bring your order number.")
+  hoursWeekday      String   @default("Mon–Sat: 9:00 AM – 8:00 PM")
+  hoursSunday       String   @default("Sun: 10:00 AM – 6:00 PM")
+  instagram         String?  @default("https://www.instagram.com/fruitfusion45")
+  tiktok            String?  @default("https://www.tiktok.com/@fruitfusion23")
+  facebook          String?
+  mapEmbedUrl       String?
+  updatedAt         DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String?
+  details   String?
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}

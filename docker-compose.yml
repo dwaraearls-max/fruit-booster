@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fruitfusion
+      POSTGRES_PASSWORD: fruitfusion
+      POSTGRES_DB: fruitfusion
+    ports:
+      - "5433:5432"
+    volumes:
+      - fruitfusion_pg:/var/lib/postgresql/data
+
+volumes:
+  fruitfusion_pg:
