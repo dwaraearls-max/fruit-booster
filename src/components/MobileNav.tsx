@@ -20,8 +20,8 @@ export function MobileNav() {
   if (pathname.startsWith("/admin")) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-plum/10 bg-white px-2 py-2 md:hidden">
-      <div className="mx-auto flex max-w-lg items-end justify-around">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-plum/10 bg-gold-pale pb-[env(safe-area-inset-bottom)] md:hidden">
+      <div className="mx-auto flex max-w-lg items-center justify-around px-2 py-2">
         {items.map(({ href, label, icon: Icon }) => (
           <Link
             key={href}
@@ -34,7 +34,7 @@ export function MobileNav() {
             <span className="relative">
               <Icon className="h-5 w-5" />
               {href === "/cart" && itemCount > 0 && (
-                <span className="absolute -right-2 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-strawberry text-[10px] text-white">
+                <span className="absolute -right-2 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-plum-dark text-[10px] text-gold">
                   {itemCount}
                 </span>
               )}
@@ -43,12 +43,6 @@ export function MobileNav() {
           </Link>
         ))}
       </div>
-      <Link
-        href="/shop"
-        className="mx-auto mt-2 block max-w-xs rounded-full bg-gold py-2.5 text-center text-sm font-bold text-plum"
-      >
-        ORDER JUICE
-      </Link>
     </nav>
   );
 }

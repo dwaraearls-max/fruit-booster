@@ -1,6 +1,6 @@
-# FruitFusionX — Premium Juice Store
+# Fruit Booster — Premium Juice Store
 
-Freshly blended. Naturally delicious. A Ghana-ready e-commerce site for FruitFusionX juices.
+Freshly blended. Naturally delicious. A Ghana-ready e-commerce site for Fruit Booster juices.
 
 ## Quick start (local)
 

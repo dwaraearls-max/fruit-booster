@@ -6,7 +6,7 @@ export function AdminLogoutButton() {
     window.location.href = "/admin/login";
   }
   return (
-    <button type="button" onClick={logout} className="text-strawberry">
+    <button type="button" onClick={logout} className="text-plum-dark">
       Logout
     </button>
   );

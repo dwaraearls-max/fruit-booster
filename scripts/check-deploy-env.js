@@ -11,7 +11,7 @@ const url = process.env.DATABASE_URL || "";
 if (!url) {
   console.error(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  FruitFusionX deploy blocked: DATABASE_URL is not set.
+  Fruit Booster deploy blocked: DATABASE_URL is not set.
 
   Quick fix (Supabase Postgres):
     1. Open https://supabase.com/dashboard/project/akcyzqarqocxbxuprmlh/settings/database
@@ -30,7 +30,7 @@ if (!url) {
 if (url.startsWith("file:")) {
   console.error(`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  FruitFusionX deploy blocked: DATABASE_URL is SQLite.
+  Fruit Booster deploy blocked: DATABASE_URL is SQLite.
   Use a PostgreSQL URL from Neon (npx neon-new@latest --yes).
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 `);

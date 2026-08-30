@@ -2,8 +2,9 @@ const sharp = require("sharp");
 const path = require("path");
 const fs = require("fs");
 
-const assets = String.raw`C:\Users\USER\.cursor\projects\c-Users-USER-Desktop-websites-FRUIT-FUSION\assets`;
+const assets = path.join(__dirname, "..", "assets");
 const dest = path.join(__dirname, "..", "public", "products");
+const boosterCup = path.join(assets, "fruit-booster-cup.jpg");
 
 const map = {
   "cup-strawberry-fusionx.png": "strawberry-fusion.jpg",

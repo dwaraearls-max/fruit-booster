@@ -14,7 +14,7 @@ export function FloatingCartBar() {
     <button
       type="button"
       onClick={() => setCartOpen(true)}
-      className="fixed bottom-20 left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 rounded-full bg-plum px-5 py-3 text-sm font-bold text-white shadow-2xl transition hover:bg-plum-light md:bottom-6"
+      className="fixed bottom-[5.75rem] left-1/2 z-40 flex -translate-x-1/2 items-center gap-2 rounded-full bg-plum px-5 py-3 text-sm font-bold text-gold shadow-2xl transition hover:bg-plum-light md:bottom-6"
     >
       <span>🛒</span>
       <span>

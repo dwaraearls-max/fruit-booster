@@ -26,7 +26,7 @@ export default function CartPage() {
         <>
           <ul className="mt-8 space-y-4">
             {lines.map((line) => (
-              <li key={line.id} className="flex gap-4 rounded-2xl bg-white p-4 shadow">
+              <li key={line.id} className="flex gap-4 rounded-2xl bg-gold/10 p-4 shadow">
                 <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl">
                   <Image src={line.imageUrl} alt={line.name} fill className="object-cover" />
                 </div>
@@ -52,7 +52,7 @@ export default function CartPage() {
                     <button
                       type="button"
                       onClick={() => removeItem(line.id)}
-                      className="ml-auto text-sm text-strawberry"
+                      className="ml-auto text-sm text-plum-dark"
                     >
                       Remove
                     </button>
@@ -67,7 +67,7 @@ export default function CartPage() {
           </div>
           <Link
             href="/checkout"
-            className="mt-6 block rounded-full bg-plum py-4 text-center font-bold text-white hover:bg-plum-light"
+            className="mt-6 block rounded-full bg-plum py-4 text-center font-bold text-gold hover:bg-plum-light"
           >
             CHECKOUT
           </Link>

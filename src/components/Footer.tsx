@@ -13,17 +13,23 @@ export async function Footer() {
   }
   const tagline = settings?.tagline || BRAND.tagline;
   const email = settings?.email || BRAND.email;
-  const instagram = settings?.instagram || BRAND.instagram;
-  const tiktok = settings?.tiktok || BRAND.tiktok;
+  const instagram = BRAND.instagram;
+  const tiktok = BRAND.tiktok;
 
   return (
-    <footer className="bg-plum-dark text-white">
+    <footer className="bg-plum-dark pb-mobile text-gold">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-4 md:px-6">
         <div className="md:col-span-2">
-          <Image src="/brand/logo.png" alt="FruitFusionX" width={220} height={44} className="mb-4 h-12 w-auto" />
+          <Image
+            src="/brand/logo.png"
+            alt="Fruit Booster"
+            width={360}
+            height={120}
+            className="mb-4 h-20 w-auto object-contain md:h-24"
+          />
           <p className="text-lg font-medium text-gold">{tagline}</p>
-          <p className="mt-3 max-w-sm text-sm text-white/70">{BRAND.shortDescription}</p>
-          <p className="mt-2 text-sm text-white/60">
+          <p className="mt-3 max-w-sm text-sm text-gold/70">{BRAND.shortDescription}</p>
+          <p className="mt-2 text-sm text-gold/60">
             <a href={`mailto:${email}`} className="hover:text-gold">
               {email}
             </a>
@@ -31,7 +37,7 @@ export async function Footer() {
         </div>
         <div>
           <h3 className="mb-4 font-bold text-gold">Quick Links</h3>
-          <ul className="space-y-2 text-sm text-white/80">
+          <ul className="space-y-2 text-sm text-gold/80">
             {[
               ["/", "Home"],
               ["/shop", "Shop"],
@@ -51,15 +57,15 @@ export async function Footer() {
         </div>
         <div>
           <h3 className="mb-4 font-bold text-gold">Follow Us</h3>
-          <ul className="space-y-2 text-sm text-white/80">
+          <ul className="space-y-2 text-sm text-gold/80">
             <li>
               <a href={instagram} target="_blank" rel="noopener noreferrer" className="hover:text-gold">
-                Instagram @fruitfusion45
+                Instagram {BRAND.instagramHandle}
               </a>
             </li>
             <li>
               <a href={tiktok} target="_blank" rel="noopener noreferrer" className="hover:text-gold">
-                TikTok @fruitfusion23
+                TikTok {BRAND.tiktokHandle}
               </a>
             </li>
           </ul>
@@ -67,18 +73,18 @@ export async function Footer() {
             href={waLink()}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-block rounded-full bg-leaf px-5 py-2 text-sm font-bold text-white hover:opacity-90"
+            className="mt-4 inline-block rounded-full bg-gold px-5 py-2 text-sm font-bold text-plum hover:bg-gold-warm"
           >
             Chat on WhatsApp
           </a>
         </div>
       </div>
-      <div className="border-t border-white/10 px-4 py-6 text-center">
+      <div className="border-t border-gold/25 px-4 py-6 text-center">
         <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-gold">
           Est. 2026 · Accra, Ghana
         </p>
-        <p className="mt-2 text-sm text-white/70">
-          © 2026 <span className="font-bold text-white">FruitFusionX</span>. Powered by{" "}
+        <p className="mt-2 text-sm text-gold/70">
+          © 2026 <span className="font-bold text-gold">Fruit Booster</span>. Powered by{" "}
           <span className="font-bold text-gold">EarlsdwaraDigital</span>.
         </p>
       </div>

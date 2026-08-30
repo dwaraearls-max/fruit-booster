@@ -101,7 +101,7 @@ export default function CheckoutPage() {
     <div className="mx-auto max-w-2xl px-4 py-12 md:px-6">
       <h1 className="text-3xl font-black text-plum">Guest Checkout</h1>
       <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-        <fieldset className="space-y-4 rounded-2xl bg-white p-6 shadow">
+        <fieldset className="space-y-4 rounded-2xl bg-gold/10 p-6 shadow">
           <legend className="px-2 text-lg font-bold text-plum">Customer Information</legend>
           {[
             ["customerName", "Full Name", "text"],
@@ -125,7 +125,7 @@ export default function CheckoutPage() {
           ))}
         </fieldset>
 
-        <fieldset className="space-y-3 rounded-2xl bg-white p-6 shadow">
+        <fieldset className="space-y-3 rounded-2xl bg-gold/10 p-6 shadow">
           <legend className="px-2 text-lg font-bold text-plum">Order Type</legend>
           <div className="grid gap-3 sm:grid-cols-2">
             {[
@@ -137,7 +137,7 @@ export default function CheckoutPage() {
                 type="button"
                 onClick={() => setDeliveryType(val as "DELIVERY" | "PICKUP")}
                 className={`rounded-2xl border-2 p-4 text-left font-bold transition ${
-                  deliveryType === val ? "border-plum bg-plum text-white" : "border-plum/20 text-plum"
+                  deliveryType === val ? "border-plum bg-plum text-gold" : "border-plum/20 text-plum"
                 }`}
               >
                 {label}
@@ -166,7 +166,7 @@ export default function CheckoutPage() {
           )}
         </fieldset>
 
-        <fieldset className="space-y-3 rounded-2xl bg-white p-6 shadow">
+        <fieldset className="space-y-3 rounded-2xl bg-gold/10 p-6 shadow">
           <legend className="px-2 text-lg font-bold text-plum">Payment</legend>
           <div className="grid gap-3 sm:grid-cols-2">
             <button
@@ -197,13 +197,13 @@ export default function CheckoutPage() {
           )}
         </fieldset>
 
-        <div className="rounded-2xl bg-white p-6 shadow">
+        <div className="rounded-2xl bg-gold/10 p-6 shadow">
           <div className="flex justify-between"><span>Juice</span><span>{formatGhs(subtotalGhs)}</span></div>
           <div className="mt-2 flex justify-between"><span>Delivery</span><span>{formatGhs(deliveryFee)}</span></div>
           <div className="mt-4 flex justify-between text-xl font-bold"><span>Total</span><span>{formatGhs(total)}</span></div>
         </div>
 
-        {error && <p className="text-center text-strawberry">{error}</p>}
+        {error && <p className="text-center text-plum-dark">{error}</p>}
 
         <button
           type="submit"

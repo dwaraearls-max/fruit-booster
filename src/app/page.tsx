@@ -1,39 +1,39 @@
 import Link from "next/link";
-import Image from "next/image";
-import { ProductCard } from "@/components/ProductCard";
-import { getProducts, serializeProduct } from "@/services/products";
+import { SmoothieMenuIntro } from "@/components/SmoothieMenuIntro";
 import { prisma } from "@/lib/db";
 import { BRAND } from "@/lib/site-content";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  let products: Awaited<ReturnType<typeof getProducts>> = [];
   let settings: Awaited<ReturnType<typeof prisma.siteSettings.findUnique>> = null;
 
   try {
-    [products, settings] = await Promise.all([
-      getProducts(),
-      prisma.siteSettings.findUnique({ where: { id: "default" } }),
-    ]);
+    settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
   } catch (error) {
     console.error("Home page data load failed:", error);
   }
 
-  const serialized = products.map(serializeProduct);
-
   return (
     <>
-      <section className="relative overflow-hidden bg-plum text-white">
-        <div className="absolute inset-0 opacity-20">
-          <Image src="/brand/hero-bg.png" alt="" fill className="object-cover" priority />
-        </div>
-        <div className="relative mx-auto max-w-4xl px-4 py-16 text-center md:px-6 md:py-24">
+      <section className="relative isolate overflow-hidden bg-plum text-gold">
+        <video
+          className="absolute inset-0 h-full w-full object-cover"
+          src="/brand/hero.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-hidden
+        />
+        <div className="absolute inset-0 bg-plum/55" />
+        <div className="relative mx-auto max-w-4xl px-4 py-24 text-center md:px-6 md:py-32 lg:py-40">
           <div>
             <h1 className="text-4xl font-black leading-tight md:text-5xl lg:text-6xl">
               {settings?.tagline || BRAND.tagline}
             </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-lg text-white/85">
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-gold/85">
               {BRAND.shortDescription}
             </p>
             <p className="mx-auto mt-2 text-base text-gold font-medium">
@@ -48,7 +48,7 @@ export default async function HomePage() {
               </Link>
               <Link
                 href="#flavours"
-                className="rounded-full border-2 border-white/40 px-8 py-4 text-lg font-bold text-white transition hover:border-gold hover:text-gold"
+                className="rounded-full border-2 border-gold/50 px-8 py-4 text-lg font-bold text-gold transition hover:border-gold hover:text-gold"
               >
                 EXPLORE FLAVOURS
               </Link>
@@ -57,49 +57,25 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section id="flavours" className="bg-plum/5 py-16">
-        <div className="mx-auto max-w-7xl px-4 md:px-6">
-          <h2 className="text-center text-3xl font-black text-plum md:text-4xl">
-            OUR 8 SIGNATURE FLAVOURS
-          </h2>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {serialized.map((p) => (
-              <ProductCard key={p.id} {...p} bestSeller={p.bestSeller} isNew={p.isNew} />
-            ))}
-          </div>
-        </div>
+      <section id="flavours">
+        <SmoothieMenuIntro browseHref="/shop" />
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-16 md:px-6">
-        <h2 className="text-center text-3xl font-black text-plum">WHY FRUITFUSIONX?</h2>
+        <h2 className="text-center text-3xl font-black text-plum">WHY FRUIT BOOSTER?</h2>
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
             ["🫐", "100% NATURAL", "Blueberries, raspberries, blackberries, strawberries & tropical fruits — no added sugar."],
-            ["🥤", "FRESHLY BLENDED", "Creamy smoothies and parfaits made fresh every day."],
+            ["🥤", "FRESHLY BLENDED", "Creamy smoothies made fresh every day."],
             ["❤️", "TASTE & WELLNESS", "A quick refreshing treat or a healthy meal replacement."],
             ["🇬🇭", "WALK-IN & DELIVERY", "Visit us in store or get fast delivery to your doorstep."],
           ].map(([icon, title, text]) => (
-            <div key={title} className="rounded-3xl bg-white p-6 text-center shadow-lg">
+            <div key={title} className="rounded-3xl bg-gold/10 p-6 text-center shadow-lg">
               <div className="text-4xl">{icon}</div>
               <h3 className="mt-4 text-lg font-bold text-plum">{title}</h3>
               <p className="mt-2 text-sm text-plum/70">{text}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      <section className="bg-plum text-white">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-6">
-          <div className="relative aspect-square overflow-hidden rounded-3xl">
-            <Image src="/products/strawberry-fusion.jpg" alt="Fresh strawberry FruitFusionX smoothie" fill className="object-cover" />
-          </div>
-          <div>
-            <h2 className="text-4xl font-black text-gold">YOU CAN TASTE THE FRESHNESS.</h2>
-            <p className="mt-4 text-xl font-semibold">Tropical fruits meet exotic.</p>
-            <p className="mt-4 text-white/80">
-              FruitFusionX specializes in fresh, creamy blends — smoothies and parfaits served daily for walk-in customers and fast delivery across Ghana.
-            </p>
-          </div>
         </div>
       </section>
 
@@ -111,7 +87,7 @@ export default async function HomePage() {
             "Mango Passion is my go-to after gym. Love the taste!",
             "Fast delivery to East Legon and the juice arrived cold. Perfect.",
           ].map((quote, i) => (
-            <blockquote key={i} className="rounded-3xl bg-white p-6 shadow-lg">
+            <blockquote key={i} className="rounded-3xl bg-gold/10 p-6 shadow-lg">
               <p className="text-gold">★★★★★</p>
               <p className="mt-3 text-plum/80">&ldquo;{quote}&rdquo;</p>
               <footer className="mt-4 text-sm font-semibold text-plum">— Customer</footer>
@@ -123,23 +99,23 @@ export default async function HomePage() {
       <section className="bg-gold/20 py-16">
         <div className="mx-auto max-w-7xl px-4 text-center md:px-6">
           <h2 className="text-3xl font-black text-plum">FOLLOW THE FRESHNESS</h2>
-          <p className="mt-3 text-plum/70">Smoothies, parfaits & daily fresh blends on Instagram and TikTok.</p>
+          <p className="mt-3 text-plum/70">Smoothies & daily fresh blends on Instagram and TikTok.</p>
           <div className="mt-6 flex flex-wrap justify-center gap-4">
             <a
-              href={settings?.instagram || BRAND.instagram}
+              href={BRAND.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-plum px-8 py-4 font-bold text-white hover:bg-plum-light"
+              className="rounded-full bg-plum px-8 py-4 font-bold text-gold hover:bg-plum-light"
             >
-              INSTAGRAM @fruitfusion45
+              INSTAGRAM {BRAND.instagramHandle.toUpperCase()}
             </a>
             <a
-              href={settings?.tiktok || BRAND.tiktok}
+              href={BRAND.tiktok}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full border-2 border-plum px-8 py-4 font-bold text-plum hover:bg-plum hover:text-white"
+              className="rounded-full border-2 border-plum px-8 py-4 font-bold text-plum hover:bg-plum-light hover:text-gold"
             >
-              TIKTOK @fruitfusion23
+              TIKTOK {BRAND.tiktokHandle.toUpperCase()}
             </a>
           </div>
         </div>
@@ -148,11 +124,11 @@ export default async function HomePage() {
       <section className="mx-auto max-w-7xl px-4 py-16 md:px-6">
         <h2 className="text-center text-3xl font-black text-plum">GET IN TOUCH</h2>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
-          <div className="rounded-3xl bg-white p-6 shadow-lg">
+          <div className="rounded-3xl bg-gold/10 p-6 shadow-lg">
             <h3 className="font-bold text-plum">Phone</h3>
             <p className="mt-2 text-plum/70">{settings?.phone}</p>
           </div>
-          <div className="rounded-3xl bg-white p-6 shadow-lg">
+          <div className="rounded-3xl bg-gold/10 p-6 shadow-lg">
             <h3 className="font-bold text-plum">Email</h3>
             <p className="mt-2 text-plum/70">
               <a href={`mailto:${settings?.email || BRAND.email}`} className="hover:text-plum">
@@ -160,7 +136,7 @@ export default async function HomePage() {
               </a>
             </p>
           </div>
-          <div className="rounded-3xl bg-white p-6 shadow-lg">
+          <div className="rounded-3xl bg-gold/10 p-6 shadow-lg">
             <h3 className="font-bold text-plum">Hours</h3>
             <p className="mt-2 text-plum/70">{settings?.hoursWeekday}</p>
             <p className="text-plum/70">{settings?.hoursSunday}</p>

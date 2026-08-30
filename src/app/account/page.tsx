@@ -41,13 +41,13 @@ export default function AccountPage() {
           className="w-full rounded-xl border border-plum/20 px-4 py-3"
           required
         />
-        <button type="submit" className="w-full rounded-full bg-plum py-3 font-bold text-white">
+        <button type="submit" className="w-full rounded-full bg-plum py-3 font-bold text-gold">
           TRACK ORDER
         </button>
       </form>
-      {error && <p className="mt-4 text-strawberry">{error}</p>}
+      {error && <p className="mt-4 text-plum-dark">{error}</p>}
       {order && (
-        <div className="mt-8 rounded-2xl bg-white p-6 shadow">
+        <div className="mt-8 rounded-2xl bg-gold/10 p-6 shadow">
           <p className="font-bold">{String(order.orderNumber)}</p>
           <p className="text-sm text-plum/70">Status: {String(order.orderStatus)}</p>
           <p className="text-sm">Total: {formatGhs(Number(order.totalGhs))}</p>

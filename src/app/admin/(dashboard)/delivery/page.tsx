@@ -25,7 +25,7 @@ export default function AdminDeliveryPage() {
       <h1 className="text-3xl font-black text-plum">Delivery Zones</h1>
       <div className="mt-8 space-y-3">
         {zones.map((z) => (
-          <div key={z.id} className="flex justify-between rounded-2xl bg-white p-4 shadow">
+          <div key={z.id} className="flex justify-between rounded-2xl bg-gold/10 p-4 shadow">
             <span className="font-semibold">{z.name}</span>
             <span>{formatGhs(z.deliveryFeeGhs)} · {z.estimatedMins} mins</span>
           </div>

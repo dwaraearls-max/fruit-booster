@@ -63,7 +63,7 @@ export default function AdminOrdersPage() {
       <h1 className="text-3xl font-black text-plum">Live Order Board</h1>
       <div className="mt-8 grid gap-4 overflow-x-auto lg:grid-cols-5">
         {columns.map(([key, label, nextStatus]) => (
-          <div key={key} className="min-w-[220px] rounded-2xl bg-white p-4 shadow">
+          <div key={key} className="min-w-[220px] rounded-2xl bg-gold/10 p-4 shadow">
             <h2 className="mb-4 font-bold text-plum">{label}</h2>
             <div className="space-y-3">
               {(board[key] || []).map((order) => (
@@ -85,7 +85,7 @@ export default function AdminOrdersPage() {
                     <button
                       type="button"
                       onClick={() => updateStatus(order.id, nextStatus)}
-                      className="mt-2 w-full rounded bg-plum py-1 text-xs font-bold text-white"
+                      className="mt-2 w-full rounded bg-plum py-1 text-xs font-bold text-gold"
                     >
                       → {nextStatus.replace(/_/g, " ")}
                     </button>

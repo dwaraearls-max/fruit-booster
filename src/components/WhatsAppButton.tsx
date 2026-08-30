@@ -10,7 +10,7 @@ export function WhatsAppButton() {
   async function handleClick() {
     const res = await fetch("/api/whatsapp");
     const json = await res.json();
-    const message = json.success ? json.data.message : "Hello FruitFusionX, I'd like to order juice!";
+    const message = json.success ? json.data.message : "Hello Fruit Booster, I'd like to order juice!";
     window.open(waLink(message), "_blank", "noopener,noreferrer");
   }
 
@@ -18,11 +18,11 @@ export function WhatsAppButton() {
     <button
       type="button"
       onClick={handleClick}
-      className="fixed bottom-20 right-4 z-40 flex items-center gap-2 rounded-full bg-leaf px-4 py-3 text-sm font-bold text-white shadow-xl transition hover:scale-105 md:bottom-6"
+      aria-label="Order on WhatsApp"
+      className="fixed bottom-[5.75rem] right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-gold text-lg text-plum shadow-xl transition hover:scale-105 md:bottom-6 md:h-auto md:w-auto md:gap-2 md:px-4 md:py-3 md:text-sm md:font-bold"
     >
-      <span>💬</span>
-      <span className="hidden sm:inline">ORDER ON WHATSAPP</span>
-      <span className="sm:hidden">WhatsApp</span>
+      <span aria-hidden>💬</span>
+      <span className="hidden md:inline">ORDER ON WHATSAPP</span>
     </button>
   );
 }

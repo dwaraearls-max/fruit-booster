@@ -75,7 +75,7 @@ export function OrderVerifyClient({
 
   if (showOtp && status !== "done") {
     return (
-      <form onSubmit={submitOtp} className="mb-6 rounded-2xl bg-white p-6 shadow">
+      <form onSubmit={submitOtp} className="mb-6 rounded-2xl bg-gold/10 p-6 shadow">
         <p className="font-semibold text-plum">Enter the OTP sent to your phone</p>
         <input
           type="text"
@@ -85,7 +85,7 @@ export function OrderVerifyClient({
           className="mt-3 w-full rounded-xl border border-plum/20 px-4 py-3"
           required
         />
-        <button type="submit" className="mt-3 w-full rounded-full bg-plum py-3 font-bold text-white">
+        <button type="submit" className="mt-3 w-full rounded-full bg-plum py-3 font-bold text-gold">
           Verify OTP
         </button>
       </form>
@@ -109,14 +109,14 @@ export function OrderVerifyClient({
   }
   if (status === "done") {
     return (
-      <div className="mb-6 rounded-2xl bg-leaf/20 p-4 text-center font-semibold text-plum">
+      <div className="mb-6 rounded-2xl bg-gold/25 p-4 text-center font-semibold text-plum">
         Payment Successful 🎉
       </div>
     );
   }
   if (status === "error") {
     return (
-      <div className="mb-6 rounded-2xl bg-strawberry/10 p-4 text-center font-semibold text-strawberry">
+      <div className="mb-6 rounded-2xl bg-plum-dark/10 p-4 text-center font-semibold text-plum-dark">
         Payment verification pending. We&apos;ll update your order shortly.
       </div>
     );

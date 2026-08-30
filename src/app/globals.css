@@ -6,10 +6,12 @@
   --color-plum-light: #8E24AA;
   --color-gold: #FFD600;
   --color-gold-warm: #FFC400;
-  --color-strawberry: #E63946;
-  --color-leaf: #25D366;
-  --color-orange: #FF6B35;
-  --color-cream: #FFF8E7;
+  --color-gold-pale: #FFF9C4;
+  /* Legacy aliases — all map to brand purple or yellow */
+  --color-cream: #FFF9C4;
+  --color-strawberry: #4A148C;
+  --color-leaf: #FFD600;
+  --color-orange: #FFC400;
   --font-display: "Segoe UI", system-ui, sans-serif;
 }
 
@@ -23,7 +25,7 @@ html {
 
 body {
   font-family: var(--font-display);
-  background: var(--color-cream);
+  background: var(--color-gold-pale);
   color: var(--color-plum);
   -webkit-font-smoothing: antialiased;
 }
@@ -34,7 +36,7 @@ body {
 }
 
 .pb-mobile {
-  padding-bottom: 7rem;
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
 }
 
 @media (min-width: 768px) {

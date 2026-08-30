@@ -39,7 +39,7 @@ export default function AdminProductsPage() {
       <h1 className="text-3xl font-black text-plum">Products</h1>
       <div className="mt-8 space-y-4">
         {products.map((p) => (
-          <div key={p.id} className="rounded-2xl bg-white p-6 shadow">
+          <div key={p.id} className="rounded-2xl bg-gold/10 p-6 shadow">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl font-bold">{p.name}</h2>
@@ -51,7 +51,7 @@ export default function AdminProductsPage() {
                 <button
                   type="button"
                   onClick={() => toggle(p.id, "available", !p.available)}
-                  className={`rounded-full px-4 py-2 text-sm font-bold ${p.available ? "bg-leaf text-white" : "bg-strawberry text-white"}`}
+                  className={`rounded-full px-4 py-2 text-sm font-bold ${p.available ? "bg-gold text-plum" : "bg-plum-dark text-gold"}`}
                 >
                   {p.available ? "Available" : "Sold Out"}
                 </button>

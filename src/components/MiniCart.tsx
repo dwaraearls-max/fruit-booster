@@ -29,7 +29,7 @@ export function MiniCart() {
   return (
     <>
       {toast && (
-        <div className="fixed left-1/2 top-24 z-[70] -translate-x-1/2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-plum shadow-xl">
+        <div className="fixed left-1/2 top-24 z-[70] -translate-x-1/2 rounded-full bg-gold/10 px-6 py-3 text-sm font-semibold text-plum shadow-xl">
           {toast}
         </div>
       )}
@@ -39,7 +39,7 @@ export function MiniCart() {
       )}
 
       <aside
-        className={`fixed right-0 top-0 z-[65] flex h-full w-full max-w-md flex-col bg-white shadow-2xl transition-transform duration-300 ${
+        className={`fixed right-0 top-0 z-[65] flex h-full w-full max-w-md flex-col bg-gold/10 shadow-2xl transition-transform duration-300 ${
           cartOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -67,7 +67,7 @@ export function MiniCart() {
                       <button
                         type="button"
                         onClick={() => updateQuantity(line.id, line.quantity - 1)}
-                        className="rounded-full bg-white p-1 shadow"
+                        className="rounded-full bg-gold/10 p-1 shadow"
                       >
                         <Minus className="h-3 w-3" />
                       </button>
@@ -75,14 +75,14 @@ export function MiniCart() {
                       <button
                         type="button"
                         onClick={() => updateQuantity(line.id, line.quantity + 1)}
-                        className="rounded-full bg-white p-1 shadow"
+                        className="rounded-full bg-gold/10 p-1 shadow"
                       >
                         <Plus className="h-3 w-3" />
                       </button>
                       <button
                         type="button"
                         onClick={() => removeItem(line.id)}
-                        className="ml-auto text-xs text-strawberry"
+                        className="ml-auto text-xs text-plum-dark"
                       >
                         Remove
                       </button>
@@ -111,7 +111,7 @@ export function MiniCart() {
               <Link
                 href="/checkout"
                 onClick={() => setCartOpen(false)}
-                className="rounded-full bg-plum py-3 text-center font-bold text-white hover:bg-plum-light"
+                className="rounded-full bg-plum py-3 text-center font-bold text-gold hover:bg-plum-light"
               >
                 CHECKOUT
               </Link>

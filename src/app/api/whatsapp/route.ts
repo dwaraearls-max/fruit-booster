@@ -31,7 +31,7 @@ export async function GET(req: Request) {
 
     const totals = cartTotals(lines);
     const message = [
-      "Hello FruitFusionX 👋",
+      "Hello Fruit Booster 👋",
       "",
       "I'd like to order:",
       "",

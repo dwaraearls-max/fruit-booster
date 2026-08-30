@@ -14,43 +14,43 @@ export default async function ContactPage() {
     console.error("Contact page data load failed:", error);
   }
   const email = settings?.email || BRAND.email;
-  const instagram = settings?.instagram || BRAND.instagram;
-  const tiktok = settings?.tiktok || BRAND.tiktok;
+  const instagram = BRAND.instagram;
+  const tiktok = BRAND.tiktok;
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 md:px-6">
       <h1 className="text-4xl font-black text-plum">GET IN TOUCH</h1>
       <div className="mt-10 grid gap-6 md:grid-cols-2">
-        <div className="rounded-2xl bg-white p-6 shadow">
+        <div className="rounded-2xl bg-gold/10 p-6 shadow">
           <h2 className="font-bold text-plum">Phone</h2>
           <p className="mt-2">{settings?.phone}</p>
         </div>
-        <div className="rounded-2xl bg-white p-6 shadow">
+        <div className="rounded-2xl bg-gold/10 p-6 shadow">
           <h2 className="font-bold text-plum">WhatsApp</h2>
-          <a href={waLink()} className="mt-2 inline-block text-leaf underline">
+          <a href={waLink()} className="mt-2 inline-block text-plum underline">
             Message us
           </a>
         </div>
-        <div className="rounded-2xl bg-white p-6 shadow">
+        <div className="rounded-2xl bg-gold/10 p-6 shadow">
           <h2 className="font-bold text-plum">Email</h2>
           <a href={`mailto:${email}`} className="mt-2 inline-block text-plum underline">
             {email}
           </a>
         </div>
-        <div className="rounded-2xl bg-white p-6 shadow">
+        <div className="rounded-2xl bg-gold/10 p-6 shadow">
           <h2 className="font-bold text-plum">Location</h2>
           <p className="mt-2">{settings?.address}</p>
         </div>
-        <div className="rounded-2xl bg-white p-6 shadow">
+        <div className="rounded-2xl bg-gold/10 p-6 shadow">
           <h2 className="font-bold text-plum">Instagram</h2>
           <a href={instagram} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-plum underline">
-            @fruitfusion45
+            {BRAND.instagramHandle}
           </a>
         </div>
-        <div className="rounded-2xl bg-white p-6 shadow">
+        <div className="rounded-2xl bg-gold/10 p-6 shadow">
           <h2 className="font-bold text-plum">TikTok</h2>
           <a href={tiktok} target="_blank" rel="noopener noreferrer" className="mt-2 inline-block text-plum underline">
-            @fruitfusion23
+            {BRAND.tiktokHandle}
           </a>
         </div>
       </div>

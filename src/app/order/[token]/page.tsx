@@ -51,7 +51,7 @@ export default async function OrderPage({
         {paid ? (
           <>
             <h1 className="text-4xl font-black text-plum">ORDER CONFIRMED! 🎉</h1>
-            <p className="mt-2 text-plum/70">Thank you for choosing FruitFusionX.</p>
+            <p className="mt-2 text-plum/70">Thank you for choosing Fruit Booster.</p>
           </>
         ) : (
           <>
@@ -61,7 +61,7 @@ export default async function OrderPage({
         )}
       </div>
 
-      <div className="mt-8 rounded-3xl bg-white p-6 shadow-lg">
+      <div className="mt-8 rounded-3xl bg-gold/10 p-6 shadow-lg">
         <p className="text-sm text-plum/60">Order number</p>
         <p className="text-2xl font-black text-plum">{order.orderNumber}</p>
         <p className="mt-4 text-sm">Customer: <strong>{order.customerName}</strong></p>
@@ -86,7 +86,7 @@ export default async function OrderPage({
         <ol className="mt-4 space-y-3">
           {steps.map((step) => (
             <li key={step.status} className="flex items-center gap-3">
-              <span className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${step.done ? "bg-leaf text-white" : "bg-plum/20 text-plum/50"}`}>
+              <span className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${step.done ? "bg-gold text-plum" : "bg-plum/20 text-plum/50"}`}>
                 {step.done ? "✓" : "○"}
               </span>
               <span className={step.done ? "font-semibold text-plum" : "text-plum/50"}>{step.label}</span>
@@ -103,7 +103,7 @@ export default async function OrderPage({
           href={waLink(waMessage)}
           target="_blank"
           rel="noopener noreferrer"
-          className="rounded-full bg-leaf py-3 text-center font-bold text-white"
+          className="rounded-full bg-gold py-3 text-center font-bold text-plum"
         >
           CHAT WITH US ON WHATSAPP
         </a>

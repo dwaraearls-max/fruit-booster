@@ -24,7 +24,7 @@ export default async function DeliveryPage() {
       </p>
       <ul className="mt-8 space-y-3">
         {zones.map((z) => (
-          <li key={z.id} className="flex justify-between rounded-2xl bg-white p-4 shadow">
+          <li key={z.id} className="flex justify-between rounded-2xl bg-gold/10 p-4 shadow">
             <span className="font-semibold">{z.name}</span>
             <span>{formatGhs(z.deliveryFeeGhs)} · ~{z.estimatedMins} mins</span>
           </li>
