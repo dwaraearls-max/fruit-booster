@@ -25,7 +25,7 @@ export async function Footer() {
             alt="Fruit Booster"
             width={360}
             height={120}
-            className="mb-4 h-20 w-auto object-contain md:h-24"
+            className="mb-4 h-12 w-auto max-w-[14rem] object-contain md:h-14 md:max-w-[16rem]"
           />
           <p className="text-lg font-medium text-gold">{tagline}</p>
           <p className="mt-3 max-w-sm text-sm text-gold/70">{BRAND.shortDescription}</p>

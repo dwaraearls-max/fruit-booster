@@ -31,7 +31,7 @@ export function Header() {
             alt="Fruit Booster"
             width={360}
             height={120}
-            className="h-16 w-auto object-contain md:h-20 lg:h-24"
+            className="h-9 w-auto max-w-[11rem] object-contain sm:h-10 sm:max-w-[13rem] md:h-12 md:max-w-[15rem]"
             priority
           />
         </Link>
