@@ -10,12 +10,6 @@ export const metadata = {
 };
 
 export default async function ShopPage() {
-  let products: ReturnType<typeof serializeProduct>[] = [];
-  try {
-    products = (await getProducts()).map(serializeProduct);
-  } catch (error) {
-    console.error("Shop page data load failed:", error);
-  }
-
+  const products = (await getProducts()).map(serializeProduct);
   return <ShopClient products={products} />;
 }

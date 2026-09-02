@@ -1,18 +1,17 @@
 import Link from "next/link";
 import { SmoothieMenuIntro } from "@/components/SmoothieMenuIntro";
-import { prisma } from "@/lib/db";
 import { BRAND } from "@/lib/site-content";
+import { getSiteSettings, SETTINGS_FALLBACK } from "@/lib/site-settings";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  let settings: Awaited<ReturnType<typeof prisma.siteSettings.findUnique>> = null;
-
-  try {
-    settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
-  } catch (error) {
-    console.error("Home page data load failed:", error);
-  }
+  const settings = await getSiteSettings();
+  const tagline = settings?.tagline || SETTINGS_FALLBACK.tagline;
+  const phone = settings?.phone || SETTINGS_FALLBACK.phone;
+  const email = settings?.email || SETTINGS_FALLBACK.email;
+  const hoursWeekday = settings?.hoursWeekday || SETTINGS_FALLBACK.hoursWeekday;
+  const hoursSunday = settings?.hoursSunday || SETTINGS_FALLBACK.hoursSunday;
 
   return (
     <>
@@ -31,7 +30,7 @@ export default async function HomePage() {
         <div className="relative mx-auto max-w-4xl px-4 py-24 text-center md:px-6 md:py-32 lg:py-40">
           <div>
             <h1 className="text-4xl font-black leading-tight md:text-5xl lg:text-6xl">
-              {settings?.tagline || BRAND.tagline}
+              {tagline}
             </h1>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-gold/85">
               {BRAND.shortDescription}
@@ -61,86 +60,66 @@ export default async function HomePage() {
         <SmoothieMenuIntro browseHref="/shop" />
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-16 md:px-6">
-        <h2 className="text-center text-3xl font-black text-plum">WHY FRUIT BOOSTER?</h2>
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            ["🫐", "100% NATURAL", "Blueberries, raspberries, blackberries, strawberries & tropical fruits — no added sugar."],
-            ["🥤", "FRESHLY BLENDED", "Creamy smoothies made fresh every day."],
-            ["❤️", "TASTE & WELLNESS", "A quick refreshing treat or a healthy meal replacement."],
-            ["🇬🇭", "WALK-IN & DELIVERY", "Visit us in store or get fast delivery to your doorstep."],
-          ].map(([icon, title, text]) => (
-            <div key={title} className="rounded-3xl bg-gold/10 p-6 text-center shadow-lg">
-              <div className="text-4xl">{icon}</div>
-              <h3 className="mt-4 text-lg font-bold text-plum">{title}</h3>
-              <p className="mt-2 text-sm text-plum/70">{text}</p>
-            </div>
-          ))}
+      <section className="border-y border-plum/10 bg-gold-pale px-4 py-16 md:px-6 md:py-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-black uppercase tracking-tight text-plum md:text-4xl">
+            Blended fresh in Accra
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-plum/70 md:text-lg">
+            Real fruit. No added sugar. Walk in for a cup made in front of you, or order for
+            delivery while it&apos;s still cold.
+          </p>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-16 md:px-6">
-        <h2 className="text-center text-3xl font-black text-plum">LOVED BY SMOOTHIE LOVERS ❤️</h2>
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {[
-            "The strawberry juice was incredibly fresh. Definitely ordering again!",
-            "Mango Passion is my go-to after gym. Love the taste!",
-            "Fast delivery to East Legon and the juice arrived cold. Perfect.",
-          ].map((quote, i) => (
-            <blockquote key={i} className="rounded-3xl bg-gold/10 p-6 shadow-lg">
-              <p className="text-gold">★★★★★</p>
-              <p className="mt-3 text-plum/80">&ldquo;{quote}&rdquo;</p>
-              <footer className="mt-4 text-sm font-semibold text-plum">— Customer</footer>
-            </blockquote>
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-gold/20 py-16">
-        <div className="mx-auto max-w-7xl px-4 text-center md:px-6">
-          <h2 className="text-3xl font-black text-plum">FOLLOW THE FRESHNESS</h2>
-          <p className="mt-3 text-plum/70">Smoothies & daily fresh blends on Instagram and TikTok.</p>
-          <div className="mt-6 flex flex-wrap justify-center gap-4">
+      <section className="bg-plum px-4 py-16 text-gold md:px-6 md:py-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-black uppercase tracking-tight md:text-4xl">See today&apos;s blends</h2>
+          <p className="mt-4 text-base text-gold/75 md:text-lg">
+            New pours, flavour drops, and store moments on {BRAND.instagramHandle} and{" "}
+            {BRAND.tiktokHandle}.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
             <a
               href={BRAND.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-plum px-8 py-4 font-bold text-gold hover:bg-plum-light"
+              className="rounded-lg bg-gold px-6 py-3 text-sm font-bold uppercase tracking-wide text-plum hover:bg-gold-warm"
             >
-              INSTAGRAM {BRAND.instagramHandle.toUpperCase()}
+              Instagram
             </a>
             <a
               href={BRAND.tiktok}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full border-2 border-plum px-8 py-4 font-bold text-plum hover:bg-plum-light hover:text-gold"
+              className="rounded-lg border border-gold/40 px-6 py-3 text-sm font-bold uppercase tracking-wide text-gold hover:border-gold"
             >
-              TIKTOK {BRAND.tiktokHandle.toUpperCase()}
+              TikTok
             </a>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-16 md:px-6">
-        <h2 className="text-center text-3xl font-black text-plum">GET IN TOUCH</h2>
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          <div className="rounded-3xl bg-gold/10 p-6 shadow-lg">
-            <h3 className="font-bold text-plum">Phone</h3>
-            <p className="mt-2 text-plum/70">{settings?.phone}</p>
-          </div>
-          <div className="rounded-3xl bg-gold/10 p-6 shadow-lg">
-            <h3 className="font-bold text-plum">Email</h3>
-            <p className="mt-2 text-plum/70">
-              <a href={`mailto:${settings?.email || BRAND.email}`} className="hover:text-plum">
-                {settings?.email || BRAND.email}
-              </a>
-            </p>
-          </div>
-          <div className="rounded-3xl bg-gold/10 p-6 shadow-lg">
-            <h3 className="font-bold text-plum">Hours</h3>
-            <p className="mt-2 text-plum/70">{settings?.hoursWeekday}</p>
-            <p className="text-plum/70">{settings?.hoursSunday}</p>
-          </div>
+      <section className="px-4 py-16 md:px-6 md:py-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-black uppercase tracking-tight text-plum md:text-4xl">Visit or call</h2>
+          <p className="mt-6 text-lg font-semibold text-plum">{phone}</p>
+          <p className="mt-1">
+            <a href={`mailto:${email}`} className="text-plum/70 underline-offset-4 hover:text-plum hover:underline">
+              {email}
+            </a>
+          </p>
+          <p className="mt-6 text-sm text-plum/65">
+            {hoursWeekday}
+            <span className="mx-2 text-plum/30">·</span>
+            {hoursSunday}
+          </p>
+          <Link
+            href="/contact"
+            className="mt-8 inline-block text-sm font-bold uppercase tracking-[0.15em] text-plum underline-offset-4 hover:underline"
+          >
+            More contact details
+          </Link>
         </div>
       </section>
     </>

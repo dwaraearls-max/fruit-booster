@@ -1,18 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-import { prisma } from "@/lib/db";
 import { waLink } from "@/lib/ghana";
 import { BRAND } from "@/lib/site-content";
+import { getSiteSettings, SETTINGS_FALLBACK } from "@/lib/site-settings";
 
 export async function Footer() {
-  let settings: Awaited<ReturnType<typeof prisma.siteSettings.findUnique>> = null;
-  try {
-    settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
-  } catch {
-    /* use brand fallbacks */
-  }
-  const tagline = settings?.tagline || BRAND.tagline;
-  const email = settings?.email || BRAND.email;
+  const settings = await getSiteSettings();
+  const tagline = settings?.tagline || SETTINGS_FALLBACK.tagline;
+  const email = settings?.email || SETTINGS_FALLBACK.email;
   const instagram = BRAND.instagram;
   const tiktok = BRAND.tiktok;
 

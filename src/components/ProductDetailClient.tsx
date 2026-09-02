@@ -25,7 +25,7 @@ type ProductDetailClientProps = {
 };
 
 function formatNutrientValue(key: keyof SmoothieNutrition, value: number | string) {
-  if (key === "calories") return `${value} kcal`;
+  if (key === "calories") return String(value);
   return String(value);
 }
 
@@ -34,7 +34,6 @@ export function ProductDetailClient({
   slug,
   name,
   description,
-  flavour,
   imageUrl,
   available,
   sizes,
@@ -56,28 +55,30 @@ export function ProductDetailClient({
 
   return (
     <div className="bg-gold-pale">
-      <div className="h-2 bg-plum" />
-
-      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6 md:py-14">
+      <div className="mx-auto max-w-5xl px-4 py-8 md:px-8 md:py-12">
         <Link
           href="/shop"
-          className="text-sm font-semibold uppercase tracking-wide text-plum/60 hover:text-plum"
+          className="text-sm text-plum/55 hover:text-plum hover:underline"
         >
           ← Back to smoothies
         </Link>
 
-        <div className="mt-8 grid items-start gap-10 md:grid-cols-2 md:gap-10 lg:gap-12">
-          <div className="relative aspect-[3/5] min-h-[28rem] w-full max-w-lg overflow-hidden bg-gold-pale md:min-h-[36rem] md:max-w-none">
-            <SmoothieCupImage src={imageUrl} alt={name} variant="detail" priority />
+        <div className="mt-6 grid items-start gap-8 md:grid-cols-[minmax(0,42%)_minmax(0,58%)] md:gap-10 lg:gap-14">
+          <div className="flex justify-center md:justify-center">
+            <div className="relative aspect-[3/4] w-full max-w-[260px] sm:max-w-[300px] md:max-w-[320px]">
+              <SmoothieCupImage src={imageUrl} alt={name} variant="detail" priority />
+            </div>
           </div>
 
-          <div>
-            <h1 className="text-3xl font-bold text-plum md:text-4xl lg:text-[2.5rem]">{name}</h1>
-            <p className="mt-5 text-base leading-relaxed text-plum/70 md:text-lg">
+          <div className="min-w-0">
+            <h1 className="font-serif text-3xl font-bold leading-tight text-plum md:text-4xl">
+              {name}
+            </h1>
+            <p className="mt-4 max-w-xl text-base leading-relaxed text-plum/75">
               {detail.ingredients || description}
             </p>
 
-            <div className="mt-8">
+            <div className="mt-5">
               <label htmlFor="size-select" className="sr-only">
                 Size
               </label>
@@ -85,19 +86,19 @@ export function ProductDetailClient({
                 id="size-select"
                 value={sizeId}
                 onChange={(e) => setSizeId(e.target.value)}
-                className="w-full max-w-xs border border-plum/25 bg-gold/10 px-4 py-3 text-plum focus:border-plum focus:outline-none"
+                className="border border-plum/30 bg-white px-3 py-2 text-sm text-plum focus:border-plum focus:outline-none"
               >
                 {sizes.map((s) => (
                   <option key={s.id} value={s.id}>
-                    {s.label} — {formatGhs(s.priceGhs)}
+                    {s.label}
                   </option>
                 ))}
               </select>
             </div>
 
-            <div className="mt-10">
-              <h2 className="text-xl font-bold text-plum md:text-2xl">Nutritional Information</h2>
-              <div className="mt-4 overflow-hidden border border-plum/15">
+            <div className="mt-8">
+              <h2 className="text-lg font-bold text-plum md:text-xl">Nutritional Information</h2>
+              <div className="mt-3 overflow-hidden border border-plum/20">
                 <table className="w-full text-sm">
                   <tbody>
                     {NUTRITION_ROWS.map(({ key, label }, i) => {
@@ -108,14 +109,14 @@ export function ProductDetailClient({
                           key={key}
                           className={
                             isCalories
-                              ? "bg-plum text-gold"
+                              ? "bg-plum text-white"
                               : i % 2 === 0
-                                ? "bg-gold/15 text-plum"
-                                : "bg-gold/5 text-plum"
+                                ? "bg-white text-plum"
+                                : "bg-plum/[0.04] text-plum"
                           }
                         >
-                          <td className="px-4 py-3 font-medium">{label}</td>
-                          <td className="px-4 py-3 text-right font-semibold">
+                          <td className="px-4 py-2.5 font-medium">{label}</td>
+                          <td className="px-4 py-2.5 text-right font-semibold">
                             {formatNutrientValue(key, value)}
                           </td>
                         </tr>
@@ -126,13 +127,13 @@ export function ProductDetailClient({
               </div>
             </div>
 
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <p className="text-2xl font-bold text-plum">{formatGhs(priceGhs)}</p>
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <p className="text-xl font-bold text-plum">{formatGhs(priceGhs)}</p>
               <button
                 type="button"
                 disabled={!available || adding || !selected}
                 onClick={handleAdd}
-                className="rounded-lg bg-plum px-8 py-4 text-sm font-bold uppercase tracking-wide text-gold transition hover:bg-plum-light disabled:opacity-50"
+                className="rounded bg-plum px-6 py-3 text-sm font-bold uppercase tracking-wide text-gold transition hover:bg-plum-light disabled:opacity-50"
               >
                 {available ? (adding ? "Adding…" : "Add to cart") : "Sold out"}
               </button>

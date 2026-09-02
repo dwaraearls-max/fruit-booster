@@ -8,26 +8,25 @@ type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const product = await getProductBySlug(slug);
-  if (!product || !product.active) return { title: "Smoothie not found" };
-  return {
-    title: product.name,
-    description: product.description,
-  };
+  try {
+    const product = await getProductBySlug(slug);
+    if (!product || !("active" in product ? product.active : true)) {
+      return { title: "Smoothie not found" };
+    }
+    return {
+      title: product.name,
+      description: product.description,
+    };
+  } catch {
+    return { title: "Smoothie" };
+  }
 }
 
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
-  let product: ReturnType<typeof serializeProduct> | null = null;
+  const raw = await getProductBySlug(slug);
+  const active = raw && ("active" in raw ? raw.active : true);
+  if (!raw || !active) notFound();
 
-  try {
-    const raw = await getProductBySlug(slug);
-    if (raw?.active) product = serializeProduct(raw);
-  } catch (error) {
-    console.error("Product detail load failed:", error);
-  }
-
-  if (!product) notFound();
-
-  return <ProductDetailClient {...product} />;
+  return <ProductDetailClient {...serializeProduct(raw)} />;
 }

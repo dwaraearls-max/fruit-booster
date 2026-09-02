@@ -26,33 +26,33 @@ export default function CartPage() {
         <>
           <ul className="mt-8 space-y-4">
             {lines.map((line) => (
-              <li key={line.id} className="flex gap-4 rounded-2xl bg-gold/10 p-4 shadow">
-                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl">
-                  <Image src={line.imageUrl} alt={line.name} fill className="object-cover" />
+              <li key={line.id} className="flex gap-4 rounded-2xl border border-plum/15 bg-white p-4 shadow-sm">
+                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-gold-pale">
+                  <Image src={line.imageUrl} alt={line.name} fill className="object-contain" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold">{line.name}</p>
-                  <p className="font-semibold">{formatGhs(line.subtotalGhs)}</p>
-                  <div className="mt-2 flex gap-2">
+                  <p className="font-bold text-plum">{line.name}</p>
+                  <p className="font-semibold text-plum">{formatGhs(line.subtotalGhs)}</p>
+                  <div className="mt-2 flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => updateQuantity(line.id, line.quantity - 1)}
-                      className="rounded bg-plum/10 px-3 py-1 text-sm"
+                      className="rounded-full border border-plum/30 bg-white px-3 py-1 text-sm font-bold text-plum hover:bg-plum/5"
                     >
                       −
                     </button>
-                    <span className="px-2 font-bold">{line.quantity}</span>
+                    <span className="px-2 font-bold text-plum">{line.quantity}</span>
                     <button
                       type="button"
                       onClick={() => updateQuantity(line.id, line.quantity + 1)}
-                      className="rounded bg-plum/10 px-3 py-1 text-sm"
+                      className="rounded-full border border-plum/30 bg-white px-3 py-1 text-sm font-bold text-plum hover:bg-plum/5"
                     >
                       +
                     </button>
                     <button
                       type="button"
                       onClick={() => removeItem(line.id)}
-                      className="ml-auto text-sm text-plum-dark"
+                      className="ml-auto text-sm font-semibold text-plum underline-offset-2 hover:underline"
                     >
                       Remove
                     </button>
@@ -61,7 +61,7 @@ export default function CartPage() {
               </li>
             ))}
           </ul>
-          <div className="mt-8 flex items-center justify-between text-xl font-bold">
+          <div className="mt-8 flex items-center justify-between text-xl font-bold text-plum">
             <span>Total</span>
             <span>{formatGhs(subtotalGhs)}</span>
           </div>

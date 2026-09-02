@@ -60,7 +60,7 @@ export function ProductCard({
           <div className="relative mx-auto aspect-[3/4] w-full max-w-[220px] bg-gold-pale">
             <SmoothieCupImage src={imageUrl} alt={name} variant="grid" />
           </div>
-          <h3 className="mt-5 text-sm font-medium leading-snug text-plum underline-offset-4 transition group-hover:underline md:text-base">
+          <h3 className="mt-4 text-sm font-medium leading-snug text-plum/85 md:mt-5 md:text-base">
             {name}
           </h3>
           {!compact && (

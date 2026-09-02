@@ -27,8 +27,10 @@ export function SmoothieCupImage({
         fill
         priority={priority}
         className={cn(
-          "object-contain object-bottom transition duration-300",
-          isDetail ? "group-hover:scale-[1.02]" : isThumb ? "" : "p-1 group-hover:scale-[1.03]",
+          "object-contain transition duration-300",
+          variant === "grid" && "object-bottom group-hover:scale-[1.02]",
+          variant === "detail" && "object-center group-hover:scale-[1.02]",
+          variant === "thumb" && "object-center",
         )}
         sizes={
           isDetail

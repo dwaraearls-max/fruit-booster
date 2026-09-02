@@ -9,6 +9,12 @@ type SmoothieMenuIntroProps = {
   browseLabel?: string;
 };
 
+const SHOWCASE = [
+  { src: "/products/regular-very-berry.jpg", alt: "Very Berry smoothie" },
+  { src: "/products/mango-hurrican.jpg", alt: "Mango Hurrican smoothie" },
+  { src: "/products/regular-nuttin-butter.jpg", alt: "Nuttin Butter smoothie" },
+] as const;
+
 export function SmoothieMenuIntro({
   onBrowse,
   browseHref,
@@ -23,36 +29,38 @@ export function SmoothieMenuIntro({
         <h1 className="text-center text-2xl font-bold text-plum md:text-3xl">Menu</h1>
 
         <div className="mt-10 grid items-center gap-10 md:mt-14 md:grid-cols-2 md:gap-12 lg:gap-16">
-          <div className="relative mx-auto w-full max-w-md md:max-w-none">
-            <div className="relative aspect-[5/4] overflow-hidden rounded-2xl bg-plum-dark shadow-xl">
-              <div className="absolute inset-0 flex items-end justify-center gap-1 px-4 pb-2 pt-8 sm:gap-3 sm:px-8 sm:pb-4">
-                <div className="relative h-[78%] w-[30%] -rotate-6">
-                  <Image
-                    src="/products/regular-very-berry.jpg"
-                    alt="Very Berry smoothie"
-                    fill
-                    className="object-contain drop-shadow-lg"
-                    sizes="120px"
-                  />
-                </div>
-                <div className="relative z-10 h-[88%] w-[34%]">
-                  <Image
-                    src="/products/mango-hurrican.jpg"
-                    alt="Mango Hurrican smoothie"
-                    fill
-                    className="object-contain drop-shadow-xl"
-                    sizes="140px"
-                  />
-                </div>
-                <div className="relative h-[78%] w-[30%] rotate-6">
-                  <Image
-                    src="/products/regular-nuttin-butter.jpg"
-                    alt="Nuttin Butter smoothie"
-                    fill
-                    className="object-contain drop-shadow-lg"
-                    sizes="120px"
-                  />
-                </div>
+          <div className="relative mx-auto aspect-[5/4] w-full max-w-md md:max-w-none">
+            <div
+              className="absolute left-3 right-3 top-1/2 h-[58%] -translate-y-1/2 rounded-2xl bg-plum-dark shadow-xl sm:left-5 sm:right-5 md:left-6 md:right-6"
+              aria-hidden
+            />
+            <div className="absolute inset-0 flex items-end justify-center gap-0 px-3 pb-1 pt-6 sm:gap-2 sm:px-6 sm:pb-3 sm:pt-8">
+              <div className="relative z-0 h-[76%] w-[30%] -rotate-6">
+                <Image
+                  src={SHOWCASE[0].src}
+                  alt={SHOWCASE[0].alt}
+                  fill
+                  className="object-contain object-bottom drop-shadow-lg"
+                  sizes="120px"
+                />
+              </div>
+              <div className="relative z-10 h-[88%] w-[34%]">
+                <Image
+                  src={SHOWCASE[1].src}
+                  alt={SHOWCASE[1].alt}
+                  fill
+                  className="object-contain object-bottom drop-shadow-xl"
+                  sizes="140px"
+                />
+              </div>
+              <div className="relative z-0 h-[76%] w-[30%] rotate-6">
+                <Image
+                  src={SHOWCASE[2].src}
+                  alt={SHOWCASE[2].alt}
+                  fill
+                  className="object-contain object-bottom drop-shadow-lg"
+                  sizes="120px"
+                />
               </div>
             </div>
           </div>
@@ -66,7 +74,8 @@ export function SmoothieMenuIntro({
             </h2>
             <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-plum/70 md:mx-0 md:text-lg">
               Delicious, nutritious and blended right before your very eyes, our legendary lineup of
-              tasty smoothies are guaranteed to nourish both your body and your cravings.
+              tasty smoothies are guaranteed to nourish both your body <em className="italic">and</em> your
+              cravings.
             </p>
             {browseHref ? (
               <Link href={browseHref} className={ctaClass}>
