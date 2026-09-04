@@ -227,7 +227,7 @@ CREATE TABLE "SiteSettings" (
     "id" TEXT NOT NULL DEFAULT 'default',
     "businessName" TEXT NOT NULL DEFAULT 'FruitFusionX',
     "tagline" TEXT NOT NULL DEFAULT 'Where Tropical Fruits Meet Exotic.',
-    "phone" TEXT NOT NULL DEFAULT '0246572540',
+    "phone" TEXT NOT NULL DEFAULT '0555979765',
     "whatsapp" TEXT NOT NULL DEFAULT '233246572540',
     "email" TEXT NOT NULL DEFAULT 'fruitfusion45@gmail.com',
     "address" TEXT NOT NULL DEFAULT 'Accra, Ghana',

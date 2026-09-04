@@ -243,7 +243,7 @@ model SiteSettings {
   id                String   @id @default("default")
   businessName      String   @default("FruitFusionX")
   tagline           String   @default("Where Tropical Fruits Meet Exotic.")
-  phone             String   @default("0246572540")
+  phone             String   @default("0555979765")
   whatsapp          String   @default("233246572540")
   email             String   @default("fruitfusion45@gmail.com")
   address           String   @default("Accra, Ghana")

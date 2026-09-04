@@ -19,7 +19,7 @@ export default function CartPage() {
         <div className="mt-10 text-center">
           <p className="text-plum/70">No juices yet. Let&apos;s fix that!</p>
           <Link href="/shop" className="mt-6 inline-block rounded-full bg-gold px-8 py-3 font-bold text-plum">
-            ORDER YOUR JUICE
+            ORDER YOUR SMOOTHIE
           </Link>
         </div>
       ) : (

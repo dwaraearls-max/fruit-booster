@@ -13,7 +13,7 @@ export function isValidGhPhone(input: string) {
 }
 
 export function whatsappDigits() {
-  return (process.env.NEXT_PUBLIC_WHATSAPP || "233246572540").replace(/\D/g, "");
+  return (process.env.NEXT_PUBLIC_WHATSAPP || "233555979765").replace(/\D/g, "");
 }
 
 export function waLink(text?: string) {

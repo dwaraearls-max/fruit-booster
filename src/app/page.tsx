@@ -43,7 +43,7 @@ export default async function HomePage() {
                 href="/shop"
                 className="rounded-full bg-gold px-8 py-4 text-lg font-bold text-plum transition hover:bg-gold-warm"
               >
-                ORDER YOUR JUICE
+                ORDER YOUR SMOOTHIE
               </Link>
               <Link
                 href="#flavours"
