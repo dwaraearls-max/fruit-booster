@@ -8,13 +8,15 @@ const { spawnSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
 
-const envPath = path.join(process.cwd(), ".env");
+const envLocal = path.join(process.cwd(), ".env.local");
+const envPath = fs.existsSync(envLocal) ? envLocal : path.join(process.cwd(), ".env");
 if (!fs.existsSync(envPath)) {
-  console.error("Missing .env");
+  console.error("Missing .env.local or .env");
   process.exit(1);
 }
 
 const raw = fs.readFileSync(envPath, "utf8");
+console.log("Reading env from", path.basename(envPath));
 const parsed = {};
 for (const line of raw.split(/\r?\n/)) {
   const trimmed = line.trim();

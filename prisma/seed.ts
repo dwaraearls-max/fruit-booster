@@ -48,12 +48,21 @@ async function seedProducts() {
     }
   }
 
-  await prisma.product.updateMany({
+  await prisma.cartItem.deleteMany({
+    where: { product: { slug: { notIn: slugs } } },
+  });
+  await prisma.orderItem.updateMany({
+    where: { product: { slug: { notIn: slugs } } },
+    data: { productId: null, sizeId: null },
+  });
+  await prisma.productSize.deleteMany({
+    where: { product: { slug: { notIn: slugs } } },
+  });
+  const removed = await prisma.product.deleteMany({
     where: { slug: { notIn: slugs } },
-    data: { active: false, available: false },
   });
 
-  console.log(`Synced ${SMOOTHIE_MENU.length} smoothie products.`);
+  console.log(`Synced ${SMOOTHIE_MENU.length} smoothie products. Removed ${removed.count} extras.`);
 }
 
 async function main() {

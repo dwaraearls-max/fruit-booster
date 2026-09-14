@@ -1,47 +1,26 @@
 import { getDashboardStats } from "@/services/admin";
-import { formatGhs } from "@/lib/utils";
+import { getAdminSession } from "@/services/auth";
+import { DashboardClient } from "@/components/admin/DashboardClient";
 
 export default async function AdminDashboardPage() {
-  let stats = {
-    todayOrders: 0,
-    todaySales: 0,
-    pendingOrders: 0,
-    completedOrders: 0,
-    totalCustomers: 0,
-    bestSellingFlavour: "—",
-    weeklyRevenue: 0,
-  };
-
+  const session = await getAdminSession();
+  let stats = null;
   try {
     stats = await getDashboardStats();
   } catch (error) {
     console.error("Admin dashboard stats failed:", error);
   }
 
-  const cards = [
-    ["Today's Orders", stats.todayOrders],
-    ["Today's Sales", formatGhs(stats.todaySales)],
-    ["Pending Orders", stats.pendingOrders],
-    ["Completed Orders", stats.completedOrders],
-    ["Total Customers", stats.totalCustomers],
-    ["Best-Selling Flavour", stats.bestSellingFlavour],
-  ];
+  if (!stats) {
+    return (
+      <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+        <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
+        <p className="mt-2 text-slate-500">
+          Could not load stats right now. Check the database connection.
+        </p>
+      </div>
+    );
+  }
 
-  return (
-    <div>
-      <h1 className="text-3xl font-black text-plum">Dashboard</h1>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {cards.map(([label, value]) => (
-          <div key={String(label)} className="rounded-2xl bg-gold/10 p-6 shadow">
-            <p className="text-sm text-plum/60">{label}</p>
-            <p className="mt-2 text-2xl font-black text-plum">{value}</p>
-          </div>
-        ))}
-      </div>
-      <div className="mt-8 rounded-2xl bg-gold/10 p-6 shadow">
-        <h2 className="font-bold text-plum">Weekly Revenue</h2>
-        <p className="mt-2 text-3xl font-black text-gold">{formatGhs(stats.weeklyRevenue)}</p>
-      </div>
-    </div>
-  );
+  return <DashboardClient stats={stats} userName={session?.fullName} />;
 }

@@ -8,7 +8,6 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const settings = await getSiteSettings();
   const tagline = settings?.tagline || SETTINGS_FALLBACK.tagline;
-  const phone = settings?.phone || SETTINGS_FALLBACK.phone;
   const email = settings?.email || SETTINGS_FALLBACK.email;
   const hoursWeekday = settings?.hoursWeekday || SETTINGS_FALLBACK.hoursWeekday;
   const hoursSunday = settings?.hoursSunday || SETTINGS_FALLBACK.hoursSunday;
@@ -102,10 +101,9 @@ export default async function HomePage() {
 
       <section className="px-4 py-16 md:px-6 md:py-20">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-black uppercase tracking-tight text-plum md:text-4xl">Visit or call</h2>
-          <p className="mt-6 text-lg font-semibold text-plum">{phone}</p>
-          <p className="mt-1">
-            <a href={`mailto:${email}`} className="text-plum/70 underline-offset-4 hover:text-plum hover:underline">
+          <h2 className="text-3xl font-black uppercase tracking-tight text-plum md:text-4xl">Visit us</h2>
+          <p className="mt-6">
+            <a href={`mailto:${email}`} className="text-lg font-semibold text-plum underline-offset-4 hover:underline">
               {email}
             </a>
           </p>

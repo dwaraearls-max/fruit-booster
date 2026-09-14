@@ -9,7 +9,6 @@ export const metadata = { title: "Contact" };
 export default async function ContactPage() {
   const settings = await getSiteSettings();
   const email = settings?.email || SETTINGS_FALLBACK.email;
-  const phone = settings?.phone || SETTINGS_FALLBACK.phone;
   const address = settings?.address || "Accra, Ghana";
   const hoursWeekday = settings?.hoursWeekday || SETTINGS_FALLBACK.hoursWeekday;
   const hoursSunday = settings?.hoursSunday || SETTINGS_FALLBACK.hoursSunday;
@@ -20,10 +19,6 @@ export default async function ContactPage() {
     <div className="mx-auto max-w-3xl px-4 py-16 md:px-6">
       <h1 className="text-4xl font-black text-plum">GET IN TOUCH</h1>
       <div className="mt-10 grid gap-6 md:grid-cols-2">
-        <div className="rounded-2xl bg-gold/10 p-6 shadow">
-          <h2 className="font-bold text-plum">Phone</h2>
-          <p className="mt-2">{phone}</p>
-        </div>
         <div className="rounded-2xl bg-gold/10 p-6 shadow">
           <h2 className="font-bold text-plum">WhatsApp</h2>
           <a href={waLink()} className="mt-2 inline-block text-plum underline">

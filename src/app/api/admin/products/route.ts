@@ -9,6 +9,7 @@ export async function GET() {
     return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
   }
   const products = await prisma.product.findMany({
+    where: { active: true },
     include: { sizes: { orderBy: { sortOrder: "asc" } } },
     orderBy: { sortOrder: "asc" },
   });
@@ -75,7 +76,7 @@ export async function PATCH(req: Request) {
       });
     }
 
-    const { id, ...updates } = body;
+    const { id, sizeId: _sizeId, priceGhs: _priceGhs, ...updates } = body;
     const product = await prisma.product.update({
       where: { id },
       data: updates,
