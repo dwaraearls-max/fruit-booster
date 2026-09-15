@@ -119,7 +119,9 @@ export async function PATCH(req: Request) {
       if (error) throw new Error(error.message);
     }
 
-    const { id, sizeId: _sizeId, priceGhs: _priceGhs, ...updates } = body;
+    const { id, sizeId: _ignoredSizeId, priceGhs: _ignoredPriceGhs, ...updates } = body;
+    void _ignoredSizeId;
+    void _ignoredPriceGhs;
     const { data: product, error } = await sb
       .from("Product")
       .update({ ...updates, updatedAt: ts })

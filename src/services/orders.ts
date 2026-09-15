@@ -60,8 +60,10 @@ export async function calculateCheckoutTotals(input: CheckoutInput) {
 
   if (input.deliveryType === "DELIVERY") {
     if (!input.area) throw new Error("Please select your delivery area.");
-    let zoneQuery = sb.from("DeliveryZone").select("*").eq("active", true);
-    const { data: zones, error: zoneError } = await zoneQuery;
+    const { data: zones, error: zoneError } = await sb
+      .from("DeliveryZone")
+      .select("*")
+      .eq("active", true);
     if (zoneError) throw new Error(zoneError.message);
     const zone = (zones || []).find(
       (z) => z.name === input.area || z.id === input.deliveryZoneId,

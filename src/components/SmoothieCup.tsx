@@ -317,6 +317,6 @@ export function SmoothieCup({ slug, flavour, name, className, size = "card" }: S
   );
 }
 
-export function hasSmoothieCupArt(_slug: string, _flavour?: string) {
+export function hasSmoothieCupArt(..._args: unknown[]) {
   return false;
 }

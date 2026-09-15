@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Minus, Plus, ShoppingBag } from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import { cn, formatGhs } from "@/lib/utils";
 import { SmoothieCupImage } from "@/components/SmoothieCupImage";
