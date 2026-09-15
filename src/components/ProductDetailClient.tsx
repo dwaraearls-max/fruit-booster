@@ -44,7 +44,7 @@ export function ProductDetailClient({
   const [adding, setAdding] = useState(false);
 
   const selected = sizes.find((s) => s.id === sizeId) ?? sizes[0];
-  const priceGhs = selected?.priceGhs ?? 100;
+  const priceGhs = selected?.priceGhs ?? 40;
 
   async function handleAdd() {
     if (!selected || !available) return;

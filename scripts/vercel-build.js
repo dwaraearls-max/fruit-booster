@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Vercel production build: validate env → generate → push schema → seed → next build
+ * Vercel production build: validate env → seed → next build
  */
 const { spawnSync } = require("child_process");
 
@@ -17,7 +17,5 @@ function run(command, args) {
 
 require("./check-deploy-env.js");
 
-run("npx", ["prisma", "generate"]);
-run("npx", ["prisma", "db", "push"]);
-run("npx", ["tsx", "prisma/seed.ts"]);
+run("npx", ["tsx", "scripts/seed.ts"]);
 run("npx", ["next", "build"]);

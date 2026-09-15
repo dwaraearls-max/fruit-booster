@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { ProductDetailClient } from "@/components/ProductDetailClient";
+import { ProductJsonLd } from "@/components/ProductJsonLd";
 import { getProductBySlug, serializeProduct } from "@/services/products";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +17,20 @@ export async function generateMetadata({ params }: Props) {
     return {
       title: product.name,
       description: product.description,
+      alternates: { canonical: `/shop/${slug}` },
+      openGraph: {
+        title: `${product.name} | Fruit Booster`,
+        description: product.description,
+        url: `/shop/${slug}`,
+        images: [{ url: product.imageUrl, alt: product.name }],
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: `${product.name} | Fruit Booster`,
+        description: product.description,
+        images: [product.imageUrl],
+      },
     };
   } catch {
     return { title: "Smoothie" };
@@ -28,5 +43,19 @@ export default async function ProductDetailPage({ params }: Props) {
   const active = raw && ("active" in raw ? raw.active : true);
   if (!raw || !active) notFound();
 
-  return <ProductDetailClient {...serializeProduct(raw)} />;
+  const product = serializeProduct(raw);
+  const priceGhs = product.sizes[0]?.priceGhs ?? 40;
+
+  return (
+    <>
+      <ProductJsonLd
+        name={product.name}
+        description={product.description}
+        imageUrl={product.imageUrl}
+        slug={slug}
+        priceGhs={priceGhs}
+      />
+      <ProductDetailClient {...product} />
+    </>
+  );
 }

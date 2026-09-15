@@ -1,4 +1,4 @@
-import { OrderStatus } from "@prisma/client";
+import type { OrderStatus } from "@/lib/enums";
 
 export const ORDER_STATUS_FLOW: OrderStatus[] = [
   "NEW",

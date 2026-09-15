@@ -42,7 +42,7 @@ export function ProductCard({
   const [adding, setAdding] = useState(false);
 
   const selected = sizes[0];
-  const priceGhs = selected?.priceGhs ?? 100;
+  const priceGhs = selected?.priceGhs ?? 40;
 
   async function handleAdd(e: React.MouseEvent) {
     e.preventDefault();

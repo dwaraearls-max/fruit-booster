@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { formatGhs } from "@/lib/utils";
 import { ORDER_STATUS_LABELS } from "@/lib/order-status";
-import type { OrderStatus } from "@prisma/client";
+import type { OrderStatus } from "@/lib/enums";
 import Link from "next/link";
 
 type TrendPoint = {

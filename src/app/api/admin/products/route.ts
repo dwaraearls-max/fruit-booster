@@ -1,18 +1,30 @@
 import { z } from "zod";
 import { NextResponse } from "next/server";
+import { createId, nowIso } from "@/lib/ids";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { getAdminSession, canManageProducts } from "@/services/auth";
-import { prisma } from "@/lib/db";
 
 export async function GET() {
   const session = await getAdminSession();
   if (!session) {
     return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
   }
-  const products = await prisma.product.findMany({
-    where: { active: true },
-    include: { sizes: { orderBy: { sortOrder: "asc" } } },
-    orderBy: { sortOrder: "asc" },
-  });
+  const sb = getSupabaseAdmin();
+  const { data, error } = await sb
+    .from("Product")
+    .select("*, sizes:ProductSize(*)")
+    .eq("active", true)
+    .order("sortOrder", { ascending: true });
+  if (error) {
+    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+  }
+  const products = (data || []).map((p) => ({
+    ...p,
+    sizes: [...(p.sizes || [])].sort(
+      (a: { sortOrder?: number }, b: { sortOrder?: number }) =>
+        (a.sortOrder ?? 0) - (b.sortOrder ?? 0),
+    ),
+  }));
   return NextResponse.json({ success: true, data: products });
 }
 
@@ -30,19 +42,46 @@ export async function POST(req: Request) {
         flavour: z.string(),
         imageUrl: z.string(),
         sizes: z.array(
-          z.object({ name: z.string(), label: z.string(), priceGhs: z.number(), sortOrder: z.number() }),
+          z.object({
+            name: z.string(),
+            label: z.string(),
+            priceGhs: z.number(),
+            sortOrder: z.number(),
+          }),
         ),
       })
       .parse(await req.json());
 
-    const product = await prisma.product.create({
-      data: {
-        ...body,
-        sizes: { create: body.sizes },
-      },
-      include: { sizes: true },
-    });
-    return NextResponse.json({ success: true, data: product });
+    const sb = getSupabaseAdmin();
+    const ts = nowIso();
+    const productId = createId();
+    const { data: product, error } = await sb
+      .from("Product")
+      .insert({
+        id: productId,
+        name: body.name,
+        slug: body.slug,
+        description: body.description,
+        flavour: body.flavour,
+        imageUrl: body.imageUrl,
+        updatedAt: ts,
+      })
+      .select("*")
+      .single();
+    if (error) throw new Error(error.message);
+
+    const sizes = body.sizes.map((s) => ({
+      id: createId(),
+      productId,
+      name: s.name,
+      label: s.label,
+      priceGhs: s.priceGhs,
+      sortOrder: s.sortOrder,
+    }));
+    const { error: sizeError } = await sb.from("ProductSize").insert(sizes);
+    if (sizeError) throw new Error(sizeError.message);
+
+    return NextResponse.json({ success: true, data: { ...product, sizes } });
   } catch {
     return NextResponse.json({ success: false, message: "Could not create product." }, { status: 400 });
   }
@@ -69,19 +108,25 @@ export async function PATCH(req: Request) {
       })
       .parse(await req.json());
 
+    const sb = getSupabaseAdmin();
+    const ts = nowIso();
+
     if (body.sizeId && body.priceGhs !== undefined && canManageProducts(session.role)) {
-      await prisma.productSize.update({
-        where: { id: body.sizeId },
-        data: { priceGhs: body.priceGhs },
-      });
+      const { error } = await sb
+        .from("ProductSize")
+        .update({ priceGhs: body.priceGhs })
+        .eq("id", body.sizeId);
+      if (error) throw new Error(error.message);
     }
 
     const { id, sizeId: _sizeId, priceGhs: _priceGhs, ...updates } = body;
-    const product = await prisma.product.update({
-      where: { id },
-      data: updates,
-      include: { sizes: true },
-    });
+    const { data: product, error } = await sb
+      .from("Product")
+      .update({ ...updates, updatedAt: ts })
+      .eq("id", id)
+      .select("*, sizes:ProductSize(*)")
+      .single();
+    if (error) throw new Error(error.message);
     return NextResponse.json({ success: true, data: product });
   } catch {
     return NextResponse.json({ success: false, message: "Could not update product." }, { status: 400 });

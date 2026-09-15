@@ -1,11 +1,9 @@
 import { randomBytes } from "crypto";
-import {
-  DeliveryType,
-  OrderStatus,
-  PaymentStatus,
-} from "@prisma/client";
-import { prisma } from "@/lib/db";
+import type { DeliveryType, OrderStatus } from "@/lib/enums";
+import { PaymentStatus } from "@/lib/enums";
+import { createId, nowIso } from "@/lib/ids";
 import { canTransition } from "@/lib/order-status";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { getNextOrderNumber } from "./products";
 
 export type CheckoutInput = {
@@ -27,16 +25,17 @@ export type CheckoutInput = {
 };
 
 export async function calculateCheckoutTotals(input: CheckoutInput) {
-  const cart = await prisma.cart.findUnique({
-    where: { id: input.cartId },
-    include: {
-      items: {
-        include: { product: true, size: true },
-      },
-    },
-  });
+  const sb = getSupabaseAdmin();
+  const { data: cart, error } = await sb
+    .from("Cart")
+    .select(
+      `*, items:CartItem(*, product:Product(*), size:ProductSize(*))`,
+    )
+    .eq("id", input.cartId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
 
-  if (!cart || cart.items.length === 0) {
+  if (!cart || !cart.items?.length) {
     throw new Error("Your cart is empty.");
   }
 
@@ -61,26 +60,30 @@ export async function calculateCheckoutTotals(input: CheckoutInput) {
 
   if (input.deliveryType === "DELIVERY") {
     if (!input.area) throw new Error("Please select your delivery area.");
-    const zone = await prisma.deliveryZone.findFirst({
-      where: {
-        active: true,
-        OR: [{ name: input.area }, { id: input.deliveryZoneId || "" }],
-      },
-    });
+    let zoneQuery = sb.from("DeliveryZone").select("*").eq("active", true);
+    const { data: zones, error: zoneError } = await zoneQuery;
+    if (zoneError) throw new Error(zoneError.message);
+    const zone = (zones || []).find(
+      (z) => z.name === input.area || z.id === input.deliveryZoneId,
+    );
     if (!zone) throw new Error("Delivery is not available to this area.");
     deliveryFeeGhs = zone.deliveryFeeGhs;
   }
 
   let discountGhs = 0;
   if (input.promoCode) {
-    const promo = await prisma.promoCode.findFirst({
-      where: {
-        code: input.promoCode.toUpperCase(),
-        active: true,
-        OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
-      },
-    });
+    const code = input.promoCode.toUpperCase();
+    const { data: promo, error: promoError } = await sb
+      .from("PromoCode")
+      .select("*")
+      .eq("code", code)
+      .eq("active", true)
+      .maybeSingle();
+    if (promoError) throw new Error(promoError.message);
     if (!promo) throw new Error("Invalid promo code.");
+    if (promo.expiresAt && new Date(promo.expiresAt) <= new Date()) {
+      throw new Error("Invalid promo code.");
+    }
     if (promo.usageLimit && promo.usedCount >= promo.usageLimit) {
       throw new Error("This promo code has expired.");
     }
@@ -99,154 +102,233 @@ export async function calculateCheckoutTotals(input: CheckoutInput) {
 }
 
 export async function createOrderFromCart(input: CheckoutInput) {
+  const sb = getSupabaseAdmin();
   const totals = await calculateCheckoutTotals(input);
   const publicToken = randomBytes(16).toString("hex");
   const orderNum = await getNextOrderNumber();
+  const ts = nowIso();
 
-  let customer = await prisma.customer.findUnique({ where: { phone: input.phone } });
+  const { data: existingCustomer, error: findErr } = await sb
+    .from("Customer")
+    .select("*")
+    .eq("phone", input.phone)
+    .maybeSingle();
+  if (findErr) throw new Error(findErr.message);
+
+  let customer = existingCustomer;
   if (!customer) {
-    customer = await prisma.customer.create({
-      data: {
+    const { data: created, error } = await sb
+      .from("Customer")
+      .insert({
+        id: createId(),
         phone: input.phone,
         fullName: input.customerName,
-        whatsappNumber: input.whatsappNumber,
-        email: input.email,
-      },
-    });
+        whatsappNumber: input.whatsappNumber ?? null,
+        email: input.email ?? null,
+        updatedAt: ts,
+      })
+      .select("*")
+      .single();
+    if (error) throw new Error(error.message);
+    customer = created;
   } else {
-    customer = await prisma.customer.update({
-      where: { id: customer.id },
-      data: {
+    const { data: updated, error } = await sb
+      .from("Customer")
+      .update({
         fullName: input.customerName,
         whatsappNumber: input.whatsappNumber || customer.whatsappNumber,
         email: input.email || customer.email,
-      },
-    });
+        updatedAt: ts,
+      })
+      .eq("id", customer.id)
+      .select("*")
+      .single();
+    if (error) throw new Error(error.message);
+    customer = updated;
   }
 
-  const order = await prisma.$transaction(async (tx) => {
-    const created = await tx.order.create({
-      data: {
-        orderNumber: orderNum,
-        publicToken,
-        customerId: customer!.id,
-        customerName: input.customerName,
-        phone: input.phone,
-        whatsappNumber: input.whatsappNumber,
-        email: input.email,
-        deliveryType: input.deliveryType,
-        area: input.area,
-        deliveryAddress: input.deliveryAddress,
-        landmark: input.landmark,
-        deliveryInstructions: input.deliveryInstructions,
-        pickupLocationId: input.pickupLocationId,
-        subtotalGhs: totals.subtotalGhs,
-        deliveryFeeGhs: totals.deliveryFeeGhs,
-        discountGhs: totals.discountGhs,
-        totalGhs: totals.totalGhs,
-        promoCode: input.promoCode?.toUpperCase(),
-        paymentMethod: input.paymentMethod,
-        momoNetwork: input.momoNetwork,
-        paymentStatus: PaymentStatus.AWAITING_PAYMENT,
-        orderStatus: OrderStatus.NEW,
-        items: {
-          create: totals.lines.map((l) => ({
-            productId: l.productId,
-            sizeId: l.sizeId,
-            productNameSnapshot: l.productName,
-            sizeLabelSnapshot: l.sizeLabel,
-            quantity: l.quantity,
-            unitPriceSnapshot: l.unitPriceGhs,
-            subtotalGhs: l.subtotalGhs,
-          })),
-        },
-        statusHistory: {
-          create: { toStatus: OrderStatus.NEW, note: "Order placed" },
-        },
-      },
-      include: { items: true },
-    });
+  const orderId = createId();
+  const { data: createdOrder, error: orderError } = await sb
+    .from("Order")
+    .insert({
+      id: orderId,
+      orderNumber: orderNum,
+      publicToken,
+      customerId: customer.id,
+      customerName: input.customerName,
+      phone: input.phone,
+      whatsappNumber: input.whatsappNumber ?? null,
+      email: input.email ?? null,
+      deliveryType: input.deliveryType,
+      area: input.area ?? null,
+      deliveryAddress: input.deliveryAddress ?? null,
+      landmark: input.landmark ?? null,
+      deliveryInstructions: input.deliveryInstructions ?? null,
+      pickupLocationId: input.pickupLocationId ?? null,
+      subtotalGhs: totals.subtotalGhs,
+      deliveryFeeGhs: totals.deliveryFeeGhs,
+      discountGhs: totals.discountGhs,
+      totalGhs: totals.totalGhs,
+      promoCode: input.promoCode?.toUpperCase() ?? null,
+      paymentMethod: input.paymentMethod,
+      momoNetwork: input.momoNetwork ?? null,
+      paymentStatus: PaymentStatus.AWAITING_PAYMENT,
+      orderStatus: "NEW",
+      updatedAt: ts,
+    })
+    .select("*")
+    .single();
+  if (orderError) throw new Error(orderError.message);
 
-    await tx.cartItem.deleteMany({ where: { cartId: input.cartId } });
+  const orderItems = totals.lines.map((l) => ({
+    id: createId(),
+    orderId,
+    productId: l.productId,
+    sizeId: l.sizeId,
+    productNameSnapshot: l.productName,
+    sizeLabelSnapshot: l.sizeLabel,
+    quantity: l.quantity,
+    unitPriceSnapshot: l.unitPriceGhs,
+    subtotalGhs: l.subtotalGhs,
+  }));
+  const { error: itemsError } = await sb.from("OrderItem").insert(orderItems);
+  if (itemsError) throw new Error(itemsError.message);
 
-    if (input.promoCode) {
-      await tx.promoCode.updateMany({
-        where: { code: input.promoCode.toUpperCase() },
-        data: { usedCount: { increment: 1 } },
-      });
-    }
-
-    return created;
+  const { error: histError } = await sb.from("OrderStatusHistory").insert({
+    id: createId(),
+    orderId,
+    toStatus: "NEW",
+    note: "Order placed",
   });
+  if (histError) throw new Error(histError.message);
 
-  return order;
+  const { error: clearCartError } = await sb
+    .from("CartItem")
+    .delete()
+    .eq("cartId", input.cartId);
+  if (clearCartError) throw new Error(clearCartError.message);
+
+  if (input.promoCode) {
+    const code = input.promoCode.toUpperCase();
+    const { data: promo } = await sb
+      .from("PromoCode")
+      .select("id, usedCount")
+      .eq("code", code)
+      .maybeSingle();
+    if (promo) {
+      await sb
+        .from("PromoCode")
+        .update({ usedCount: (promo.usedCount || 0) + 1, updatedAt: nowIso() })
+        .eq("id", promo.id);
+    }
+  }
+
+  return { ...createdOrder, items: orderItems };
 }
 
 export async function getOrderByToken(token: string) {
-  return prisma.order.findUnique({
-    where: { publicToken: token },
-    include: {
-      items: true,
-      statusHistory: { orderBy: { createdAt: "asc" } },
-      pickupLocation: true,
-    },
-  });
+  const sb = getSupabaseAdmin();
+  const { data, error } = await sb
+    .from("Order")
+    .select(
+      `*, items:OrderItem(*), statusHistory:OrderStatusHistory(*), pickupLocation:PickupLocation(*)`,
+    )
+    .eq("publicToken", token)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+  const statusHistory = [...(data.statusHistory || [])].sort((a, b) =>
+    String(a.createdAt).localeCompare(String(b.createdAt)),
+  );
+  return { ...data, statusHistory };
 }
 
 export async function markOrderPaid(reference: string, rawPayload?: unknown) {
-  const order = await prisma.order.findFirst({
-    where: { OR: [{ paystackRef: reference }, { publicToken: reference }] },
-  });
+  const sb = getSupabaseAdmin();
+  const { data: byRef } = await sb
+    .from("Order")
+    .select("*")
+    .eq("paystackRef", reference)
+    .maybeSingle();
+  const { data: byToken } = byRef
+    ? { data: null }
+    : await sb.from("Order").select("*").eq("publicToken", reference).maybeSingle();
+  const order = byRef || byToken;
   if (!order) return null;
   if (order.paymentStatus === PaymentStatus.SUCCESS) return order;
 
-  const updated = await prisma.$transaction(async (tx) => {
-    const o = await tx.order.update({
-      where: { id: order.id },
-      data: {
-        paymentStatus: PaymentStatus.SUCCESS,
-        orderStatus:
-          order.orderStatus === OrderStatus.NEW ? OrderStatus.PAYMENT_CONFIRMED : order.orderStatus,
-        paystackRef: reference,
-      },
-    });
+  const ts = nowIso();
+  const nextStatus =
+    order.orderStatus === "NEW" ? "PAYMENT_CONFIRMED" : order.orderStatus;
 
-    await tx.payment.upsert({
-      where: { reference },
-      create: {
-        orderId: order.id,
-        reference,
-        amountGhs: order.totalGhs,
-        provider: order.paymentProvider || "paystack",
+  const { data: updated, error } = await sb
+    .from("Order")
+    .update({
+      paymentStatus: PaymentStatus.SUCCESS,
+      orderStatus: nextStatus,
+      paystackRef: reference,
+      updatedAt: ts,
+    })
+    .eq("id", order.id)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+
+  const { data: existingPayment } = await sb
+    .from("Payment")
+    .select("id")
+    .eq("reference", reference)
+    .maybeSingle();
+
+  if (existingPayment) {
+    await sb
+      .from("Payment")
+      .update({
         status: PaymentStatus.SUCCESS,
-        rawPayload: rawPayload ? JSON.stringify(rawPayload) : undefined,
-      },
-      update: { status: PaymentStatus.SUCCESS, rawPayload: rawPayload ? JSON.stringify(rawPayload) : undefined },
+        rawPayload: rawPayload ? JSON.stringify(rawPayload) : null,
+        updatedAt: ts,
+      })
+      .eq("id", existingPayment.id);
+  } else {
+    await sb.from("Payment").insert({
+      id: createId(),
+      orderId: order.id,
+      reference,
+      amountGhs: order.totalGhs,
+      provider: order.paymentProvider || "paystack",
+      status: PaymentStatus.SUCCESS,
+      rawPayload: rawPayload ? JSON.stringify(rawPayload) : null,
+      updatedAt: ts,
     });
+  }
 
-    if (order.orderStatus === OrderStatus.NEW) {
-      await tx.orderStatusHistory.create({
-        data: {
-          orderId: order.id,
-          fromStatus: OrderStatus.NEW,
-          toStatus: OrderStatus.PAYMENT_CONFIRMED,
-          note: "Payment verified",
-        },
-      });
+  if (order.orderStatus === "NEW") {
+    await sb.from("OrderStatusHistory").insert({
+      id: createId(),
+      orderId: order.id,
+      fromStatus: "NEW",
+      toStatus: "PAYMENT_CONFIRMED",
+      note: "Payment verified",
+    });
+  }
+
+  if (order.customerId) {
+    const { data: customer } = await sb
+      .from("Customer")
+      .select("totalSpentGhs, orderCount")
+      .eq("id", order.customerId)
+      .maybeSingle();
+    if (customer) {
+      await sb
+        .from("Customer")
+        .update({
+          totalSpentGhs: (customer.totalSpentGhs || 0) + order.totalGhs,
+          orderCount: (customer.orderCount || 0) + 1,
+          updatedAt: ts,
+        })
+        .eq("id", order.customerId);
     }
-
-    if (order.customerId) {
-      await tx.customer.update({
-        where: { id: order.customerId },
-        data: {
-          totalSpentGhs: { increment: order.totalGhs },
-          orderCount: { increment: 1 },
-        },
-      });
-    }
-
-    return o;
-  });
+  }
 
   return updated;
 }
@@ -257,28 +339,36 @@ export async function updateOrderStatus(
   userId?: string,
   note?: string,
 ) {
-  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  const sb = getSupabaseAdmin();
+  const { data: order, error } = await sb
+    .from("Order")
+    .select("*")
+    .eq("id", orderId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
   if (!order) throw new Error("Order not found");
-  if (!canTransition(order.orderStatus, toStatus)) {
+  if (!canTransition(order.orderStatus as OrderStatus, toStatus)) {
     throw new Error(`Cannot move order from ${order.orderStatus} to ${toStatus}`);
   }
 
-  return prisma.$transaction(async (tx) => {
-    const updated = await tx.order.update({
-      where: { id: orderId },
-      data: { orderStatus: toStatus },
-    });
-    await tx.orderStatusHistory.create({
-      data: {
-        orderId,
-        fromStatus: order.orderStatus,
-        toStatus,
-        changedById: userId,
-        note,
-      },
-    });
-    return updated;
+  const { data: updated, error: updateError } = await sb
+    .from("Order")
+    .update({ orderStatus: toStatus, updatedAt: nowIso() })
+    .eq("id", orderId)
+    .select("*")
+    .single();
+  if (updateError) throw new Error(updateError.message);
+
+  await sb.from("OrderStatusHistory").insert({
+    id: createId(),
+    orderId,
+    fromStatus: order.orderStatus,
+    toStatus,
+    changedById: userId ?? null,
+    note: note ?? null,
   });
+
+  return updated;
 }
 
 export function buildWhatsAppOrderMessage(order: {

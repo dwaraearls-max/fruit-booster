@@ -1,17 +1,25 @@
-import { prisma } from "@/lib/db";
+import { getSupabaseAdmin, isDbUnreachable } from "@/lib/supabase";
 import { SMOOTHIE_MENU } from "@/lib/smoothie-menu";
 import { orderNumber } from "@/lib/order-status";
 
-const DEFAULT_PRICE_GHS = 100;
+const DEFAULT_PRICE_GHS = 40;
 
-function isDbUnreachable(error: unknown) {
-  const msg = error instanceof Error ? error.message : String(error);
-  return /can't reach database|timed out|p1001|p1017|econnrefused|enotfound/i.test(msg);
-}
+const PRODUCT_WITH_SIZES =
+  "*, sizes:ProductSize(id, name, label, priceGhs, available, sortOrder, productId, sku)";
 
 function warnDb(context: string, error: unknown) {
   const msg = error instanceof Error ? error.message : String(error);
   console.warn(`[db] ${context}:`, msg.split("\n")[0]);
+}
+
+function sortSizes<T extends { sortOrder?: number | null }>(sizes: T[] | null | undefined) {
+  return [...(sizes || [])].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+}
+
+function normalizeProduct<T extends { sizes?: Array<{ sortOrder?: number | null }> | null }>(
+  product: T,
+) {
+  return { ...product, sizes: sortSizes(product.sizes) };
 }
 
 /** Offline / DB-down catalog so the shop still shows the 18 cups. */
@@ -50,15 +58,19 @@ export type ProductDTO = Awaited<ReturnType<typeof getMenuFallbackProducts>>[num
 
 export async function getProducts(filters?: { filter?: string }) {
   try {
-    const where: Record<string, unknown> = { active: true };
-    if (filters?.filter === "popular") where.bestSeller = true;
-    if (filters?.filter === "new") where.isNew = true;
+    const sb = getSupabaseAdmin();
+    let query = sb
+      .from("Product")
+      .select(PRODUCT_WITH_SIZES)
+      .eq("active", true)
+      .order("sortOrder", { ascending: true });
 
-    return await prisma.product.findMany({
-      where,
-      include: { sizes: { orderBy: { sortOrder: "asc" } } },
-      orderBy: { sortOrder: "asc" },
-    });
+    if (filters?.filter === "popular") query = query.eq("bestSeller", true);
+    if (filters?.filter === "new") query = query.eq("isNew", true);
+
+    const { data, error } = await query;
+    if (error) throw new Error(error.message);
+    return (data || []).map(normalizeProduct);
   } catch (error) {
     warnDb("getProducts", error);
     if (isDbUnreachable(error)) return getMenuFallbackProducts(filters);
@@ -68,10 +80,14 @@ export async function getProducts(filters?: { filter?: string }) {
 
 export async function getProductBySlug(slug: string) {
   try {
-    return await prisma.product.findUnique({
-      where: { slug },
-      include: { sizes: { orderBy: { sortOrder: "asc" } } },
-    });
+    const sb = getSupabaseAdmin();
+    const { data, error } = await sb
+      .from("Product")
+      .select(PRODUCT_WITH_SIZES)
+      .eq("slug", slug)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return data ? normalizeProduct(data) : null;
   } catch (error) {
     warnDb("getProductBySlug", error);
     if (isDbUnreachable(error)) {
@@ -83,12 +99,16 @@ export async function getProductBySlug(slug: string) {
 
 export async function getFeaturedProducts(limit = 4) {
   try {
-    return await prisma.product.findMany({
-      where: { active: true, featured: true },
-      include: { sizes: { orderBy: { sortOrder: "asc" } } },
-      orderBy: { sortOrder: "asc" },
-      take: limit,
-    });
+    const sb = getSupabaseAdmin();
+    const { data, error } = await sb
+      .from("Product")
+      .select(PRODUCT_WITH_SIZES)
+      .eq("active", true)
+      .eq("featured", true)
+      .order("sortOrder", { ascending: true })
+      .limit(limit);
+    if (error) throw new Error(error.message);
+    return (data || []).map(normalizeProduct);
   } catch (error) {
     warnDb("getFeaturedProducts", error);
     if (isDbUnreachable(error)) {
@@ -102,12 +122,16 @@ export async function getFeaturedProducts(limit = 4) {
 
 export async function getBestSellers(limit = 4) {
   try {
-    return await prisma.product.findMany({
-      where: { active: true, bestSeller: true },
-      include: { sizes: { orderBy: { sortOrder: "asc" } } },
-      orderBy: { sortOrder: "asc" },
-      take: limit,
-    });
+    const sb = getSupabaseAdmin();
+    const { data, error } = await sb
+      .from("Product")
+      .select(PRODUCT_WITH_SIZES)
+      .eq("active", true)
+      .eq("bestSeller", true)
+      .order("sortOrder", { ascending: true })
+      .limit(limit);
+    if (error) throw new Error(error.message);
+    return (data || []).map(normalizeProduct);
   } catch (error) {
     warnDb("getBestSellers", error);
     if (isDbUnreachable(error)) {
@@ -143,11 +167,17 @@ export function serializeProduct(p: ProductDTO) {
 }
 
 export async function getNextOrderNumber() {
+  const sb = getSupabaseAdmin();
   let num = orderNumber();
-  let exists = await prisma.order.findUnique({ where: { orderNumber: num } });
-  while (exists) {
+  for (let i = 0; i < 20; i++) {
+    const { data, error } = await sb
+      .from("Order")
+      .select("id")
+      .eq("orderNumber", num)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!data) return num;
     num = orderNumber();
-    exists = await prisma.order.findUnique({ where: { orderNumber: num } });
   }
   return num;
 }

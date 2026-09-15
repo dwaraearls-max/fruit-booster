@@ -1,17 +1,28 @@
-import { prisma } from "@/lib/db";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { formatGhs } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Delivery Information" };
 
+type Zone = {
+  id: string;
+  name: string;
+  deliveryFeeGhs: number;
+  estimatedMins: number;
+};
+
 export default async function DeliveryPage() {
-  let zones: Awaited<ReturnType<typeof prisma.deliveryZone.findMany>> = [];
+  let zones: Zone[] = [];
   try {
-    zones = await prisma.deliveryZone.findMany({
-      where: { active: true },
-      orderBy: { sortOrder: "asc" },
-    });
+    const sb = getSupabaseAdmin();
+    const { data, error } = await sb
+      .from("DeliveryZone")
+      .select("id, name, deliveryFeeGhs, estimatedMins")
+      .eq("active", true)
+      .order("sortOrder", { ascending: true });
+    if (error) throw new Error(error.message);
+    zones = data || [];
   } catch (error) {
     console.error("Delivery page data load failed:", error);
   }
@@ -26,7 +37,9 @@ export default async function DeliveryPage() {
         {zones.map((z) => (
           <li key={z.id} className="flex justify-between rounded-2xl bg-gold/10 p-4 shadow">
             <span className="font-semibold">{z.name}</span>
-            <span>{formatGhs(z.deliveryFeeGhs)} · ~{z.estimatedMins} mins</span>
+            <span>
+              {formatGhs(z.deliveryFeeGhs)} · ~{z.estimatedMins} mins
+            </span>
           </li>
         ))}
       </ul>

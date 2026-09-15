@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db";
+import { getSupabaseAdmin, isDbUnreachable } from "@/lib/supabase";
 import { BRAND } from "@/lib/site-content";
 
 export const SETTINGS_FALLBACK = {
@@ -12,10 +12,20 @@ export const SETTINGS_FALLBACK = {
 /** Load site settings; never throws — storefront stays up if Supabase is briefly unreachable. */
 export async function getSiteSettings() {
   try {
-    return await prisma.siteSettings.findUnique({ where: { id: "default" } });
+    const sb = getSupabaseAdmin();
+    const { data, error } = await sb
+      .from("SiteSettings")
+      .select("*")
+      .eq("id", "default")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return data;
   } catch (error) {
     const msg = error instanceof Error ? error.message : "unknown";
     console.warn("[db] siteSettings unavailable:", msg.split("\n")[0]);
+    if (!isDbUnreachable(error)) {
+      console.warn("[db] siteSettings error detail:", msg);
+    }
     return null;
   }
 }

@@ -1,10 +1,12 @@
 import { z } from "zod";
 import { NextResponse } from "next/server";
 import { isValidGhPhone } from "@/lib/ghana";
+import { nowIso } from "@/lib/ids";
 import { initializePayment, getPaymentProvider } from "@/lib/payments";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { getCartId } from "@/services/cart";
 import { createOrderFromCart } from "@/services/orders";
-import { prisma } from "@/lib/db";
+import { sendOrderEmails } from "@/lib/email";
 
 const schema = z.object({
   customerName: z.string().min(2),
@@ -62,14 +64,36 @@ export async function POST(req: Request) {
       momoNetwork: body.momoNetwork,
     });
 
-    await prisma.order.update({
-      where: { id: order.id },
-      data: {
+    const sb = getSupabaseAdmin();
+    await sb
+      .from("Order")
+      .update({
         paystackRef: pay.reference,
         paymentProvider: pay.provider,
-        momoNetwork: body.momoNetwork,
-      },
-    });
+        momoNetwork: body.momoNetwork ?? null,
+        updatedAt: nowIso(),
+      })
+      .eq("id", order.id);
+
+    void sendOrderEmails({
+      orderNumber: order.orderNumber,
+      publicToken: order.publicToken,
+      customerName: order.customerName,
+      phone: order.phone,
+      email: body.email || null,
+      totalGhs: order.totalGhs,
+      deliveryType: order.deliveryType,
+      area: order.area,
+      items: (order.items || []).map((i: {
+        productNameSnapshot: string;
+        quantity: number;
+        subtotalGhs: number;
+      }) => ({
+        name: i.productNameSnapshot,
+        quantity: i.quantity,
+        subtotalGhs: i.subtotalGhs,
+      })),
+    }).catch((err) => console.warn("[email] order notify failed:", err));
 
     return NextResponse.json({
       success: true,

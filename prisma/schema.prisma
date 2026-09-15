@@ -1,3 +1,5 @@
+// Schema reference only — runtime uses @supabase/supabase-js (see scripts/seed.ts).
+// Tables live in Supabase Postgres project akcyzqarqocxbxuprmlh.
 generator client {
   provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]

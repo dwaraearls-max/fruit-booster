@@ -1,13 +1,19 @@
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
-import { UserRole } from "@prisma/client";
-import { prisma } from "@/lib/db";
+import type { UserRole } from "@/lib/enums";
+import { getSupabaseAdmin } from "@/lib/supabase";
 
 const SESSION_COOKIE = "ff_admin_session";
 const SESSION_MAX_AGE = 60 * 60 * 8;
 
 export async function loginAdmin(email: string, password: string) {
-  const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
+  const sb = getSupabaseAdmin();
+  const { data: user, error } = await sb
+    .from("User")
+    .select("*")
+    .eq("email", email.toLowerCase())
+    .maybeSingle();
+  if (error) throw new Error(error.message);
   if (!user) return null;
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) return null;
@@ -38,7 +44,13 @@ export async function getAdminSession() {
   const userId = parts[parts.length - 1];
   if (!userId) return null;
 
-  const user = await prisma.user.findUnique({ where: { id: userId } });
+  const sb = getSupabaseAdmin();
+  const { data: user, error } = await sb
+    .from("User")
+    .select("id, email, fullName, role")
+    .eq("id", userId)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
   if (!user) return null;
 
   return {

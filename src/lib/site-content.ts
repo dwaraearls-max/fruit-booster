@@ -24,5 +24,5 @@ export const BRAND_COLORS = {
   purpleLight: "#8E24AA",
   yellow: "#FFD600",
   yellowWarm: "#FFC400",
-  yellowPale: "#FFF9C4",
+  yellowPale: "#FBE351",
 } as const;

@@ -46,19 +46,19 @@ const BASE: Record<string, SmoothieDetail> = {
       potassium: "510mg",
     },
   },
-  "regular-tropical-tornado": {
+  "orange-natural": {
     ingredients:
-      "Passion fruit, pineapple, guava, mango and coconut beverage — a swirling tropical storm in every sip.",
+      "Fresh orange, banana and a splash of citrus — bright, natural and naturally sweet.",
     nutrition: {
-      calories: 435,
-      protein: "15g",
-      carbohydrate: "76g",
+      calories: 355,
+      protein: "11g",
+      carbohydrate: "68g",
       fibre: "5g",
-      totalSugars: "59g",
-      fat: "5g",
-      saturatedFat: "1.5g",
-      calcium: "210mg",
-      potassium: "495mg",
+      totalSugars: "52g",
+      fat: "3g",
+      saturatedFat: "0.5g",
+      calcium: "180mg",
+      potassium: "480mg",
     },
   },
   "regular-breezy-banana": {
@@ -91,7 +91,7 @@ const BASE: Record<string, SmoothieDetail> = {
       potassium: "420mg",
     },
   },
-  "straybery-sunshine-berry": {
+  "strawberry-sunshine-berry": {
     ingredients:
       "Strawberries, blueberries, raspberries, banana and apple — strawberry sunshine boosted with mixed berries.",
     nutrition: {
@@ -241,19 +241,19 @@ const BASE: Record<string, SmoothieDetail> = {
       potassium: "560mg",
     },
   },
-  "canada-colada": {
+  "regular-gh-favorite": {
     ingredients:
-      "Pineapple, coconut cream, banana and vanilla — vacation vibes in every gulp.",
+      "Banana, pineapple, coconut and a touch of honey — Ghana’s creamy favourite.",
     nutrition: {
-      calories: 475,
-      protein: "13g",
-      carbohydrate: "76g",
+      calories: 455,
+      protein: "14g",
+      carbohydrate: "74g",
       fibre: "4g",
-      totalSugars: "60g",
-      fat: "9g",
-      saturatedFat: "5.5g",
-      calcium: "185mg",
-      potassium: "490mg",
+      totalSugars: "56g",
+      fat: "7g",
+      saturatedFat: "3.5g",
+      calcium: "190mg",
+      potassium: "510mg",
     },
   },
   "berry-cream-sensation": {

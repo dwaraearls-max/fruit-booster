@@ -12,7 +12,7 @@ export async function Footer() {
   const tiktok = BRAND.tiktok;
 
   return (
-    <footer className="bg-plum-dark pb-mobile text-gold">
+    <footer className="bg-plum pb-mobile text-gold">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-4 md:px-6">
         <div className="md:col-span-2">
           <Image
@@ -80,7 +80,15 @@ export async function Footer() {
         </p>
         <p className="mt-2 text-sm text-gold/70">
           © 2026 <span className="font-bold text-gold">Fruit Booster</span>. Powered by{" "}
-          <span className="font-bold text-gold">EarlsdwaraDigital</span>.
+          <a
+            href="https://www.earlsdwaradigital.store/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative z-10 inline-block py-1 font-bold text-gold underline decoration-gold/40 underline-offset-2 transition hover:text-gold-warm hover:decoration-gold"
+          >
+            EarlsdwaraDigital
+          </a>
+          .
         </p>
       </div>
     </footer>

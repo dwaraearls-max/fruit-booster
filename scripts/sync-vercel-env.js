@@ -35,16 +35,21 @@ for (const line of raw.split(/\r?\n/)) {
 }
 
 const keys = [
-  "DATABASE_URL",
-  "DATABASE_URL_DIRECT",
+  "NEXT_PUBLIC_SUPABASE_URL",
+  "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+  "SUPABASE_SERVICE_ROLE_KEY",
   "AUTH_SECRET",
   "NEXT_PUBLIC_WHATSAPP",
   "PAYMENT_PROVIDER",
   "ADMIN_EMAIL",
   "ADMIN_PASSWORD",
-  "NEXT_PUBLIC_SUPABASE_URL",
-  "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-  "SUPABASE_SERVICE_ROLE_KEY",
+  "RESEND_API_KEY",
+  "RESEND_FROM_EMAIL",
+  "ORDER_NOTIFY_EMAIL",
+  "GOOGLE_SITE_VERIFICATION",
+  // Optional: kept for SQL tooling / legacy; app runtime uses Supabase JS
+  "DATABASE_URL",
+  "DATABASE_URL_DIRECT",
 ];
 
 // Prefer production site URL if provided; otherwise leave for manual set after first deploy

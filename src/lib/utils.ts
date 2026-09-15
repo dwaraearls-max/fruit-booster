@@ -4,7 +4,7 @@ export const brand = {
   plumLight: "#8E24AA",
   gold: "#FFD600",
   goldWarm: "#FFC400",
-  goldPale: "#FFF9C4",
+  goldPale: "#FBE351",
 } as const;
 
 export function cn(...classes: Array<string | false | null | undefined>) {

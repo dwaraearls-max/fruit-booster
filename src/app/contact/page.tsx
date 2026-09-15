@@ -1,10 +1,15 @@
 import { waLink } from "@/lib/ghana";
 import { BRAND } from "@/lib/site-content";
 import { getSiteSettings, SETTINGS_FALLBACK } from "@/lib/site-settings";
+import { ContactForm } from "@/components/ContactForm";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Contact" };
+export const metadata = {
+  title: "Contact",
+  description:
+    "Contact Fruit Booster in Accra — WhatsApp, email, or send a message. Fresh smoothies, walk-in and delivery.",
+};
 
 export default async function ContactPage() {
   const settings = await getSiteSettings();
@@ -48,6 +53,7 @@ export default async function ContactPage() {
           </a>
         </div>
       </div>
+      <ContactForm />
       <div className="mt-8 rounded-2xl bg-plum/5 p-8 text-center">
         <p className="font-semibold">{hoursWeekday}</p>
         <p className="text-plum/70">{hoursSunday}</p>

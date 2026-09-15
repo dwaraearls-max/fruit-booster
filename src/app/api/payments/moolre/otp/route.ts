@@ -2,7 +2,7 @@ import { z } from "zod";
 import { NextResponse } from "next/server";
 import { initiateMoolreMoMo, moolreChannel } from "@/lib/moolre";
 import { markOrderPaid } from "@/services/orders";
-import { prisma } from "@/lib/db";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { verifyMoolrePayment } from "@/lib/moolre";
 
 const schema = z.object({
@@ -14,7 +14,13 @@ const schema = z.object({
 export async function POST(req: Request) {
   try {
     const body = schema.parse(await req.json());
-    const order = await prisma.order.findUnique({ where: { publicToken: body.orderToken } });
+    const sb = getSupabaseAdmin();
+    const { data: order, error } = await sb
+      .from("Order")
+      .select("*")
+      .eq("publicToken", body.orderToken)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
     if (!order) {
       return NextResponse.json({ success: false, message: "Order not found." }, { status: 404 });
     }

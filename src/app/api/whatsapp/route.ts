@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { getSupabaseAdmin } from "@/lib/supabase";
 import { getCartId, getCartWithItems, mapCartLines, cartTotals } from "@/services/cart";
 import { buildWhatsAppOrderMessage } from "@/services/orders";
 
@@ -9,10 +9,13 @@ export async function GET(req: Request) {
     const orderToken = searchParams.get("order");
 
     if (orderToken) {
-      const order = await prisma.order.findUnique({
-        where: { publicToken: orderToken },
-        include: { items: true },
-      });
+      const sb = getSupabaseAdmin();
+      const { data: order, error } = await sb
+        .from("Order")
+        .select("*, items:OrderItem(*)")
+        .eq("publicToken", orderToken)
+        .maybeSingle();
+      if (error) throw new Error(error.message);
       if (!order) {
         return NextResponse.json({ success: false, message: "Order not found." }, { status: 404 });
       }

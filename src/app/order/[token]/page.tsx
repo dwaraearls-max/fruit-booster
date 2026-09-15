@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getOrderByToken } from "@/services/orders";
 import { ORDER_STATUS_FLOW, ORDER_STATUS_LABELS } from "@/lib/order-status";
+import type { OrderStatus } from "@/lib/enums";
 import { formatGhs } from "@/lib/utils";
 import { waLink } from "@/lib/ghana";
 import { buildWhatsAppOrderMessage } from "@/services/orders";
@@ -30,11 +31,12 @@ export default async function OrderPage({
 
   if (!order) notFound();
 
+  const status = order.orderStatus as OrderStatus;
   const steps = ORDER_STATUS_FLOW.map((s) => ({
     status: s,
     label: ORDER_STATUS_LABELS[s],
     done:
-      ORDER_STATUS_FLOW.indexOf(order!.orderStatus) >= ORDER_STATUS_FLOW.indexOf(s) ||
+      ORDER_STATUS_FLOW.indexOf(status) >= ORDER_STATUS_FLOW.indexOf(s) ||
       (s === "PAYMENT_CONFIRMED" && order!.paymentStatus === "SUCCESS"),
   }));
 
@@ -69,7 +71,13 @@ export default async function OrderPage({
         <p className="text-sm">Delivery: <strong>{order.deliveryType === "DELIVERY" ? order.area : "Pickup"}</strong></p>
 
         <ul className="mt-6 space-y-2 border-t pt-4">
-          {order.items.map((item) => (
+          {(order.items || []).map(
+            (item: {
+              id: string;
+              productNameSnapshot: string;
+              quantity: number;
+              subtotalGhs: number;
+            }) => (
             <li key={item.id} className="flex justify-between text-sm">
               <span>
                 {item.productNameSnapshot} × {item.quantity}

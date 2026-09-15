@@ -31,16 +31,16 @@ function getCupTheme(slug: string, flavour?: string): CupTheme {
 
 type CupTheme = {
   fill: string;
-  fruit: "mango" | "tropical" | "banana" | "strawberry" | "berry" | "classic" | "nut" | "coconut" | "pineapple" | "monkey" | "colada" | "pawpaw";
+  fruit: "mango" | "tropical" | "banana" | "strawberry" | "berry" | "classic" | "nut" | "coconut" | "pineapple" | "monkey" | "colada" | "pawpaw" | "orange";
 };
 
 const THEMES: Record<string, CupTheme> = {
   "regular-mango-hurrican": { fill: "#F4A020", fruit: "mango" },
   "mango-hurrican-tropical": { fill: "#E8913A", fruit: "tropical" },
-  "regular-tropical-tornado": { fill: "#E07830", fruit: "tropical" },
+  "orange-natural": { fill: "#F08A20", fruit: "orange" },
   "regular-breezy-banana": { fill: "#F5D76E", fruit: "banana" },
   "regular-strawbery-sunshine": { fill: "#E85A6B", fruit: "strawberry" },
-  "straybery-sunshine-berry": { fill: "#C94B6A", fruit: "berry" },
+  "strawberry-sunshine-berry": { fill: "#C94B6A", fruit: "berry" },
   "regular-very-berry": { fill: "#9B2D5B", fruit: "berry" },
   "regular-the-original": { fill: "#7B3FA0", fruit: "classic" },
   "regular-banana-a-whey": { fill: "#E8C84A", fruit: "banana" },
@@ -50,7 +50,7 @@ const THEMES: Record<string, CupTheme> = {
   "regular-coco-crush": { fill: "#E8D5B5", fruit: "coconut" },
   "regular-pineapple-freeze": { fill: "#F0C040", fruit: "pineapple" },
   "regular-funky-monkey": { fill: "#8B5A2B", fruit: "monkey" },
-  "canada-colada": { fill: "#F2D08A", fruit: "colada" },
+  "regular-gh-favorite": { fill: "#E8C080", fruit: "banana" },
   "berry-cream-sensation": { fill: "#B85A7A", fruit: "berry" },
   "paw-paw-passion": { fill: "#F0A040", fruit: "pawpaw" },
 };
@@ -58,6 +58,7 @@ const THEMES: Record<string, CupTheme> = {
 function FruitGraphic({ fruit }: { fruit: CupTheme["fruit"] }) {
   switch (fruit) {
     case "mango":
+    case "orange":
       return (
         <g transform="translate(100,118)">
           <ellipse cx="28" cy="32" rx="22" ry="28" fill="#FFB000" transform="rotate(-25 28 32)" />
