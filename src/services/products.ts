@@ -2,7 +2,10 @@ import { getSupabaseAdmin, isDbUnreachable } from "@/lib/supabase";
 import { SMOOTHIE_MENU } from "@/lib/smoothie-menu";
 import { orderNumber } from "@/lib/order-status";
 
-const DEFAULT_PRICE_GHS = 40;
+const DEFAULT_SIZES = [
+  { name: "small", label: "Small", priceGhs: 50, sortOrder: 0 },
+  { name: "large", label: "Large", priceGhs: 70, sortOrder: 1 },
+] as const;
 
 const PRODUCT_WITH_SIZES =
   "*, sizes:ProductSize(id, name, label, priceGhs, available, sortOrder, productId, sku)";
@@ -41,16 +44,14 @@ export function getMenuFallbackProducts(filters?: { filter?: string }) {
     featured: !!item.featured,
     isNew: !!item.isNew,
     sortOrder: item.sortOrder,
-    sizes: [
-      {
-        id: `menu-${item.slug}-regular`,
-        name: "REGULAR",
-        label: "Regular",
-        priceGhs: DEFAULT_PRICE_GHS,
-        available: true,
-        sortOrder: 0,
-      },
-    ],
+    sizes: (item.sizes ?? DEFAULT_SIZES).map((size, index) => ({
+      id: `menu-${item.slug}-${size.name}`,
+      name: size.name.toUpperCase(),
+      label: size.label,
+      priceGhs: size.priceGhs,
+      available: true,
+      sortOrder: size.sortOrder ?? index,
+    })),
   }));
 }
 

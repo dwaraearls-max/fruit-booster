@@ -44,7 +44,7 @@ export default async function ProductDetailPage({ params }: Props) {
   if (!raw || !active) notFound();
 
   const product = serializeProduct(raw);
-  const priceGhs = product.sizes[0]?.priceGhs ?? 40;
+  const priceGhs = product.sizes[0]?.priceGhs ?? 50;
 
   return (
     <>

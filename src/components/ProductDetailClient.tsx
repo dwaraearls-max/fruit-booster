@@ -44,7 +44,7 @@ export function ProductDetailClient({
   const [adding, setAdding] = useState(false);
 
   const selected = sizes.find((s) => s.id === sizeId) ?? sizes[0];
-  const priceGhs = selected?.priceGhs ?? 40;
+  const priceGhs = selected?.priceGhs ?? 50;
 
   async function handleAdd() {
     if (!selected || !available) return;
@@ -79,21 +79,28 @@ export function ProductDetailClient({
             </p>
 
             <div className="mt-5">
-              <label htmlFor="size-select" className="sr-only">
-                Size
-              </label>
-              <select
-                id="size-select"
-                value={sizeId}
-                onChange={(e) => setSizeId(e.target.value)}
-                className="border border-plum/30 bg-white px-3 py-2 text-sm text-plum focus:border-plum focus:outline-none"
-              >
-                {sizes.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
+              <p className="text-sm font-semibold text-plum">Choose size</p>
+              <div className="mt-2 flex flex-wrap gap-2" role="radiogroup" aria-label="Size">
+                {sizes.map((s) => {
+                  const active = s.id === (selected?.id ?? sizeId);
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={active}
+                      onClick={() => setSizeId(s.id)}
+                      className={
+                        active
+                          ? "border border-plum bg-plum px-4 py-2.5 text-sm font-bold text-gold"
+                          : "border border-plum/30 bg-white px-4 py-2.5 text-sm font-medium text-plum hover:border-plum"
+                      }
+                    >
+                      {s.label} · {formatGhs(s.priceGhs)}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             <div className="mt-8">

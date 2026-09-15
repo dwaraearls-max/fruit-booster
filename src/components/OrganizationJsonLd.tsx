@@ -35,7 +35,7 @@ export function OrganizationJsonLd() {
           addressCountry: "GH",
         },
         servesCuisine: "Smoothies",
-        priceRange: "GH₵40",
+        priceRange: "GH₵50–70",
         parentOrganization: { "@id": `${url}/#organization` },
       },
       {

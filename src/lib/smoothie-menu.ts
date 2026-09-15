@@ -13,6 +13,8 @@ export type SmoothieMenuItem = {
   featured?: boolean;
   isNew?: boolean;
   sortOrder: number;
+  /** Optional per-product size prices; defaults to Small 50 / Large 70. */
+  sizes?: Array<{ name: "small" | "large"; label: string; priceGhs: number; sortOrder: number }>;
 };
 
 export const SMOOTHIE_MENU: SmoothieMenuItem[] = [
@@ -78,6 +80,10 @@ export const SMOOTHIE_MENU: SmoothieMenuItem[] = [
     imageUrl: "/products/regular-very-berry.jpg",
     featured: true,
     sortOrder: 7,
+    sizes: [
+      { name: "small", label: "Small", priceGhs: 65, sortOrder: 1 },
+      { name: "large", label: "Large", priceGhs: 85, sortOrder: 2 },
+    ],
   },
   {
     name: "Regular The Original",
@@ -104,6 +110,10 @@ export const SMOOTHIE_MENU: SmoothieMenuItem[] = [
     description: "Mixed berries and whey — lean, clean and berry powered.",
     imageUrl: "/products/regular-ripped-berry.jpg",
     sortOrder: 10,
+    sizes: [
+      { name: "small", label: "Small", priceGhs: 65, sortOrder: 1 },
+      { name: "large", label: "Large", priceGhs: 85, sortOrder: 2 },
+    ],
   },
   {
     name: "Regular Strawberry Storm",
@@ -165,6 +175,10 @@ export const SMOOTHIE_MENU: SmoothieMenuItem[] = [
     imageUrl: "/products/berry-cream-sensation.jpg",
     featured: true,
     sortOrder: 17,
+    sizes: [
+      { name: "small", label: "Small", priceGhs: 65, sortOrder: 1 },
+      { name: "large", label: "Large", priceGhs: 85, sortOrder: 2 },
+    ],
   },
   {
     name: "Paw-Paw Passion",

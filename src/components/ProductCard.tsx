@@ -41,8 +41,12 @@ export function ProductCard({
   const [qty, setQty] = useState(1);
   const [adding, setAdding] = useState(false);
 
-  const selected = sizes[0];
-  const priceGhs = selected?.priceGhs ?? 40;
+  const [sizeId, setSizeId] = useState(sizes[0]?.id ?? "");
+  const selected = sizes.find((s) => s.id === sizeId) ?? sizes[0];
+  const priceGhs = selected?.priceGhs ?? 50;
+  const fromPrice = sizes.length
+    ? Math.min(...sizes.map((s) => s.priceGhs))
+    : 50;
 
   async function handleAdd(e: React.MouseEvent) {
     e.preventDefault();
@@ -66,7 +70,9 @@ export function ProductCard({
           {!compact && (
             <p className="mx-auto mt-2 line-clamp-2 max-w-xs text-xs text-plum/55 md:text-sm">{description}</p>
           )}
-          <p className="mt-2 text-sm font-medium text-plum/70">{formatGhs(priceGhs)}</p>
+          <p className="mt-2 text-sm font-medium text-plum/70">
+            from {formatGhs(fromPrice)}
+          </p>
         </Link>
       </article>
     );
@@ -98,6 +104,30 @@ export function ProductCard({
         </Link>
         {!compact && <p className="mt-1 line-clamp-2 text-sm text-plum/70">{description}</p>}
         <p className="mt-3 text-2xl font-bold text-plum">{formatGhs(priceGhs)}</p>
+
+        {sizes.length > 1 && (
+          <div className="mt-3 flex flex-wrap gap-2" role="radiogroup" aria-label="Size">
+            {sizes.map((s) => {
+              const active = s.id === (selected?.id ?? sizeId);
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => setSizeId(s.id)}
+                  className={
+                    active
+                      ? "rounded-full bg-plum px-3 py-1.5 text-xs font-bold text-gold"
+                      : "rounded-full border border-plum/25 bg-white px-3 py-1.5 text-xs font-medium text-plum"
+                  }
+                >
+                  {s.label} · {formatGhs(s.priceGhs)}
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         <div className="mt-4 flex items-center justify-between gap-3">
           <div className="flex items-center rounded-full border border-plum/20">

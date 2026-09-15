@@ -86,10 +86,10 @@ export default function PrivacyPage() {
             <p className="mt-4">
               Privacy contact:{" "}
               <a
-                href="mailto:Fruitbooster6@gmail.com"
+                href="mailto:fruitbooster6@gmail.com"
                 className="font-semibold text-plum underline-offset-4 hover:underline"
               >
-                Fruitbooster6@gmail.com
+                fruitbooster6@gmail.com
               </a>
             </p>
           </section>

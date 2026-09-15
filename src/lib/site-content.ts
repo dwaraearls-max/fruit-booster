@@ -1,6 +1,6 @@
 export const BRAND = {
   name: "Fruit Booster",
-  email: "fruitfusion45@gmail.com",
+  email: "fruitbooster6@gmail.com",
   phone: "0555979765",
   whatsapp: "233555979765",
   instagram: "https://www.instagram.com/fruitbooster6",

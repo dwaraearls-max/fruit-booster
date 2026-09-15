@@ -56,7 +56,7 @@ async function seedProducts() {
   const ts = nowIso();
 
   for (const flavour of SMOOTHIE_MENU) {
-    const { isNew, bestSeller, featured, ...data } = flavour;
+    const { isNew, bestSeller, featured, sizes: customSizes, ...data } = flavour;
     const { data: existing } = await sb
       .from("Product")
       .select("id")
@@ -97,25 +97,52 @@ async function seedProducts() {
       if (error) throw error;
     }
 
+    const desiredSizes = customSizes ?? [
+      { name: "small" as const, label: "Small", priceGhs: 50, sortOrder: 1 },
+      { name: "large" as const, label: "Large", priceGhs: 70, sortOrder: 2 },
+    ];
+
     const { data: sizes } = await sb
       .from("ProductSize")
-      .select("id")
+      .select("id, name")
       .eq("productId", productId);
-    if (!sizes?.length) {
-      const { error } = await sb.from("ProductSize").insert({
-        id: createId(),
-        productId,
-        name: "regular",
-        label: "Regular",
-        priceGhs: 40,
-        sortOrder: 1,
-      });
-      if (error) throw error;
-    } else {
-      const { error } = await sb
-        .from("ProductSize")
-        .update({ priceGhs: 40 })
-        .eq("productId", productId);
+
+    for (const want of desiredSizes) {
+      const existing = (sizes || []).find(
+        (s) => String(s.name).toLowerCase() === want.name,
+      );
+      if (existing) {
+        const { error } = await sb
+          .from("ProductSize")
+          .update({
+            name: want.name,
+            label: want.label,
+            priceGhs: want.priceGhs,
+            sortOrder: want.sortOrder,
+          })
+          .eq("id", existing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await sb.from("ProductSize").insert({
+          id: createId(),
+          productId,
+          name: want.name,
+          label: want.label,
+          priceGhs: want.priceGhs,
+          sortOrder: want.sortOrder,
+        });
+        if (error) throw error;
+      }
+    }
+
+    const obsolete = (sizes || []).filter(
+      (s) => !["small", "large"].includes(String(s.name).toLowerCase()),
+    );
+    if (obsolete.length) {
+      const obsoleteIds = obsolete.map((s) => s.id);
+      await sb.from("CartItem").delete().in("sizeId", obsoleteIds);
+      await sb.from("OrderItem").update({ sizeId: null }).in("sizeId", obsoleteIds);
+      const { error } = await sb.from("ProductSize").delete().in("id", obsoleteIds);
       if (error) throw error;
     }
   }
