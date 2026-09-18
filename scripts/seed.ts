@@ -98,8 +98,8 @@ async function seedProducts() {
     }
 
     const desiredSizes = customSizes ?? [
-      { name: "small" as const, label: "Small", priceGhs: 50, sortOrder: 1 },
-      { name: "large" as const, label: "Large", priceGhs: 70, sortOrder: 2 },
+      { name: "regular" as const, label: "Regular", priceGhs: 70, sortOrder: 1 },
+      { name: "small" as const, label: "Small", priceGhs: 50, sortOrder: 2 },
     ];
 
     const { data: sizes } = await sb
@@ -108,9 +108,13 @@ async function seedProducts() {
       .eq("productId", productId);
 
     for (const want of desiredSizes) {
-      const existing = (sizes || []).find(
-        (s) => String(s.name).toLowerCase() === want.name,
-      );
+      const existing = (sizes || []).find((s) => {
+        const n = String(s.name).toLowerCase();
+        if (n === want.name) return true;
+        // Migrate former "large" rows to "regular"
+        if (want.name === "regular" && n === "large") return true;
+        return false;
+      });
       if (existing) {
         const { error } = await sb
           .from("ProductSize")
@@ -135,8 +139,13 @@ async function seedProducts() {
       }
     }
 
-    const obsolete = (sizes || []).filter(
-      (s) => !["small", "large"].includes(String(s.name).toLowerCase()),
+    const kept = new Set(["small", "regular"]);
+    const { data: afterSizes } = await sb
+      .from("ProductSize")
+      .select("id, name")
+      .eq("productId", productId);
+    const obsolete = (afterSizes || []).filter(
+      (s) => !kept.has(String(s.name).toLowerCase()),
     );
     if (obsolete.length) {
       const obsoleteIds = obsolete.map((s) => s.id);

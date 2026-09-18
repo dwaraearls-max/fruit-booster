@@ -24,6 +24,16 @@ type ProductCardProps = {
   variant?: "default" | "menu";
 };
 
+function highestPrice(sizes: Size[]) {
+  if (!sizes.length) return 70;
+  return Math.max(...sizes.map((s) => s.priceGhs));
+}
+
+function highestSizeId(sizes: Size[]) {
+  if (!sizes.length) return "";
+  return sizes.reduce((best, s) => (s.priceGhs > best.priceGhs ? s : best)).id;
+}
+
 export function ProductCard({
   id,
   name,
@@ -40,13 +50,11 @@ export function ProductCard({
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
   const [adding, setAdding] = useState(false);
+  const [sizeId, setSizeId] = useState(() => highestSizeId(sizes));
 
-  const [sizeId, setSizeId] = useState(sizes[0]?.id ?? "");
   const selected = sizes.find((s) => s.id === sizeId) ?? sizes[0];
-  const priceGhs = selected?.priceGhs ?? 50;
-  const fromPrice = sizes.length
-    ? Math.min(...sizes.map((s) => s.priceGhs))
-    : 50;
+  const priceGhs = selected?.priceGhs ?? 70;
+  const showcasePrice = highestPrice(sizes);
 
   async function handleAdd(e: React.MouseEvent) {
     e.preventDefault();
@@ -68,11 +76,11 @@ export function ProductCard({
             {name}
           </h3>
           {!compact && (
-            <p className="mx-auto mt-2 line-clamp-2 max-w-xs text-xs text-plum/55 md:text-sm">{description}</p>
+            <p className="mx-auto mt-2 line-clamp-2 max-w-xs text-xs text-plum/55 md:text-sm">
+              {description}
+            </p>
           )}
-          <p className="mt-2 text-sm font-medium text-plum/70">
-            from {formatGhs(fromPrice)}
-          </p>
+          <p className="mt-2 text-sm font-medium text-plum/70">{formatGhs(showcasePrice)}</p>
         </Link>
       </article>
     );
@@ -106,26 +114,22 @@ export function ProductCard({
         <p className="mt-3 text-2xl font-bold text-plum">{formatGhs(priceGhs)}</p>
 
         {sizes.length > 1 && (
-          <div className="mt-3 flex flex-wrap gap-2" role="radiogroup" aria-label="Size">
-            {sizes.map((s) => {
-              const active = s.id === (selected?.id ?? sizeId);
-              return (
-                <button
-                  key={s.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={active}
-                  onClick={() => setSizeId(s.id)}
-                  className={
-                    active
-                      ? "rounded-full bg-plum px-3 py-1.5 text-xs font-bold text-gold"
-                      : "rounded-full border border-plum/25 bg-white px-3 py-1.5 text-xs font-medium text-plum"
-                  }
-                >
-                  {s.label} · {formatGhs(s.priceGhs)}
-                </button>
-              );
-            })}
+          <div className="mt-3">
+            <label htmlFor={`size-${id}`} className="sr-only">
+              Size
+            </label>
+            <select
+              id={`size-${id}`}
+              value={sizeId}
+              onChange={(e) => setSizeId(e.target.value)}
+              className="border border-plum/30 bg-white px-3 py-2 text-sm text-plum focus:border-plum focus:outline-none"
+            >
+              {sizes.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.label}
+                </option>
+              ))}
+            </select>
           </div>
         )}
 

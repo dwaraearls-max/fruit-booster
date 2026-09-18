@@ -3,8 +3,8 @@ import { SMOOTHIE_MENU } from "@/lib/smoothie-menu";
 import { orderNumber } from "@/lib/order-status";
 
 const DEFAULT_SIZES = [
-  { name: "small", label: "Small", priceGhs: 50, sortOrder: 0 },
-  { name: "large", label: "Large", priceGhs: 70, sortOrder: 1 },
+  { name: "regular", label: "Regular", priceGhs: 70, sortOrder: 0 },
+  { name: "small", label: "Small", priceGhs: 50, sortOrder: 1 },
 ] as const;
 
 const PRODUCT_WITH_SIZES =

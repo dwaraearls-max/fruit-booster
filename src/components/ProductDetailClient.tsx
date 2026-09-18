@@ -7,6 +7,7 @@ import { SmoothieCupImage } from "@/components/SmoothieCupImage";
 import {
   getSmoothieDetail,
   NUTRITION_ROWS,
+  DEFAULT_NUTRITION_FOOTNOTE,
   type SmoothieNutrition,
 } from "@/lib/smoothie-nutrition";
 import { useCart } from "./providers/CartProvider";
@@ -40,11 +41,14 @@ export function ProductDetailClient({
 }: ProductDetailClientProps) {
   const { addItem } = useCart();
   const detail = getSmoothieDetail(slug);
-  const [sizeId, setSizeId] = useState(sizes[0]?.id ?? "");
+  const [sizeId, setSizeId] = useState(() => {
+    if (!sizes.length) return "";
+    return sizes.reduce((best, s) => (s.priceGhs > best.priceGhs ? s : best)).id;
+  });
   const [adding, setAdding] = useState(false);
 
   const selected = sizes.find((s) => s.id === sizeId) ?? sizes[0];
-  const priceGhs = selected?.priceGhs ?? 50;
+  const priceGhs = selected?.priceGhs ?? 70;
 
   async function handleAdd() {
     if (!selected || !available) return;
@@ -79,28 +83,21 @@ export function ProductDetailClient({
             </p>
 
             <div className="mt-5">
-              <p className="text-sm font-semibold text-plum">Choose size</p>
-              <div className="mt-2 flex flex-wrap gap-2" role="radiogroup" aria-label="Size">
-                {sizes.map((s) => {
-                  const active = s.id === (selected?.id ?? sizeId);
-                  return (
-                    <button
-                      key={s.id}
-                      type="button"
-                      role="radio"
-                      aria-checked={active}
-                      onClick={() => setSizeId(s.id)}
-                      className={
-                        active
-                          ? "border border-plum bg-plum px-4 py-2.5 text-sm font-bold text-gold"
-                          : "border border-plum/30 bg-white px-4 py-2.5 text-sm font-medium text-plum hover:border-plum"
-                      }
-                    >
-                      {s.label} · {formatGhs(s.priceGhs)}
-                    </button>
-                  );
-                })}
-              </div>
+              <label htmlFor="size-select" className="sr-only">
+                Size
+              </label>
+              <select
+                id="size-select"
+                value={sizeId}
+                onChange={(e) => setSizeId(e.target.value)}
+                className="min-w-[9rem] border border-plum/30 bg-white px-3 py-2 text-sm text-plum focus:border-plum focus:outline-none"
+              >
+                {sizes.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="mt-8">
@@ -110,6 +107,7 @@ export function ProductDetailClient({
                   <tbody>
                     {NUTRITION_ROWS.map(({ key, label }, i) => {
                       const value = detail.nutrition[key];
+                      if (value === undefined || value === "") return null;
                       const isCalories = key === "calories";
                       return (
                         <tr
@@ -132,6 +130,9 @@ export function ProductDetailClient({
                   </tbody>
                 </table>
               </div>
+              <p className="mt-3 text-sm text-plum/70">
+                {detail.footnote || DEFAULT_NUTRITION_FOOTNOTE}
+              </p>
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">

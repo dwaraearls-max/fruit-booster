@@ -8,11 +8,15 @@ export type SmoothieNutrition = {
   saturatedFat: string;
   calcium: string;
   potassium: string;
+  cholesterol?: string;
+  sodium?: string;
 };
 
 export type SmoothieDetail = {
   ingredients: string;
   nutrition: SmoothieNutrition;
+  /** Shown under the nutrition table on the product page. */
+  footnote?: string;
 };
 
 const BASE: Record<string, SmoothieDetail> = {
@@ -20,12 +24,12 @@ const BASE: Record<string, SmoothieDetail> = {
     ingredients:
       "Brace yourself for a tropical hit with this powerful blend of mango, pineapple, banana, oat beverage and whey protein.",
     nutrition: {
-      calories: 420,
-      protein: "18g",
-      carbohydrate: "72g",
-      fibre: "5g",
-      totalSugars: "58g",
-      fat: "5g",
+      calories: 509,
+      protein: "13g",
+      carbohydrate: "106g",
+      fibre: "2.5g",
+      totalSugars: "80g",
+      fat: "4.8g",
       saturatedFat: "1g",
       calcium: "220mg",
       potassium: "480mg",
@@ -183,18 +187,22 @@ const BASE: Record<string, SmoothieDetail> = {
   },
   "regular-nuttin-butter": {
     ingredients:
-      "Peanut butter, banana, honey, oat beverage and whey protein — nuttin beats this combo.",
+      "Peanut butter, banana, skim milk, yogurt and Wow Butter — high-protein and creamy.",
     nutrition: {
-      calories: 520,
+      calories: 700,
       protein: "22g",
       carbohydrate: "64g",
       fibre: "6g",
       totalSugars: "46g",
       fat: "14g",
-      saturatedFat: "3g",
-      calcium: "230mg",
-      potassium: "580mg",
+      saturatedFat: "~5g",
+      cholesterol: "~12mg",
+      sodium: "~280mg",
+      calcium: "~45% daily value",
+      potassium: "~950mg",
     },
+    footnote:
+      "High protein smoothie, good source of calcium, potassium, and vitamin B6.",
   },
   "regular-coco-crush": {
     ingredients:
@@ -260,12 +268,12 @@ const BASE: Record<string, SmoothieDetail> = {
     ingredients:
       "Mixed berries, banana, yogurt and honey blended velvety smooth — pure sensation.",
     nutrition: {
-      calories: 430,
-      protein: "16g",
-      carbohydrate: "72g",
-      fibre: "6g",
-      totalSugars: "57g",
-      fat: "6g",
+      calories: 389,
+      protein: "13g",
+      carbohydrate: "76g",
+      fibre: "4.5g",
+      totalSugars: "53g",
+      fat: "4.5g",
       saturatedFat: "2g",
       calcium: "250mg",
       potassium: "470mg",
@@ -315,6 +323,11 @@ export const NUTRITION_ROWS: Array<{ key: keyof SmoothieNutrition; label: string
   { key: "totalSugars", label: "Total Sugars" },
   { key: "fat", label: "Fat" },
   { key: "saturatedFat", label: "Saturated Fat" },
+  { key: "cholesterol", label: "Cholesterol" },
+  { key: "sodium", label: "Sodium" },
   { key: "calcium", label: "Calcium" },
   { key: "potassium", label: "Potassium" },
 ];
+
+export const DEFAULT_NUTRITION_FOOTNOTE =
+  "Enough vitamins to keep you occupying through the day.";
